@@ -1,0 +1,1402 @@
+{
+  "users": [
+    {
+      "id": "3d4f4248-b0c0-4ef3-8dfd-b5912df94e67",
+      "hospitalName": "Bathery",
+      "username": "bathery123",
+      "email": "ashvinvarghese123@gmail.com",
+      "passwordHash": "71a4d5019b5d37f74fabfb650afc3a2f:b6aa5a74a93bd8f3d6f55ea8597df01b3855ef797f7cc58bb83bc2011937666f2706474b8c55bcee1723ca5f0a49ce0b2f68511d7c30952003d26b56c342915a",
+      "createdAt": "2026-08-05T07:51:49.261Z"
+    }
+  ],
+  "ledgers": {
+    "3d4f4248-b0c0-4ef3-8dfd-b5912df94e67": {
+      "medicines": [
+        {
+          "id": "msfsjwp9z8vtz",
+          "name": "paracet",
+          "unit": "30",
+          "reorder": 10,
+          "batches": [
+            {
+              "id": "msfsjwp91here",
+              "qty": 10,
+              "expiry": "2026-07-27",
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161tez3z",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat16136ymr",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161slq79",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161zc78p",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161r53bt",
+              "qty": 4,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161ap5mn",
+              "qty": 11,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161k1spo",
+              "qty": 6,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161wxhs8",
+              "qty": 1,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161d8l5h",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            }
+          ]
+        },
+        {
+          "id": "msfsm051197lm",
+          "name": "meloxicam",
+          "unit": "30",
+          "reorder": 12,
+          "batches": [
+            {
+              "id": "msfsm051cz9iy",
+              "qty": 67,
+              "expiry": "2026-08-06",
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161yroib",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat1619tyih",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161c7lv3",
+              "qty": 12,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            },
+            {
+              "id": "msgat161mdkcb",
+              "qty": 1,
+              "expiry": null,
+              "addedDate": "2026-08-05"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdy2e8jw",
+          "name": "Inj Enrofloxacin LA 10%  100 mg/ml",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdysktb6",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyn7j60",
+          "name": "Inj Oxytetracycline LA  200 mg/ml",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdygxv2n",
+          "name": "Inj. Tylosin tartrate  200mg/ml",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdyag1x9",
+          "name": "Inj Marbofloxacin",
+          "unit": "30 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdyqsypy",
+          "name": "Inj Xceft 1 g",
+          "unit": "1g",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyjckve",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyh1j0d",
+          "name": "Inj Xceft 250 mg",
+          "unit": "250 mg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyvqoz2",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdysryib",
+          "name": "Inj Amoxicillin Sulbactum",
+          "unit": "4.5 g",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyjqwwx",
+              "qty": 20,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            },
+            {
+              "id": "msgx6wdyp06gl",
+              "qty": 25,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyylq5o",
+          "name": "Inj Ceftriaxone tazobactum",
+          "unit": "4.5 g",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdy63crd",
+          "name": "Inj. Amoxicillin Oily LA",
+          "unit": "50 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdy3amc4",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdynuey1",
+          "name": "Inj Meloxicam 5mg/ml",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyckb8e",
+              "qty": 15,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyzhc6n",
+          "name": "Inj Flunixine meglumine",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdycdhtn",
+              "qty": 9,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdy23l0j",
+          "name": "Inj. Phenyl Butazone Sodium Salicylate",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdycrybi",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyl45n9",
+          "name": "Inj Frusemide (Ridema)",
+          "unit": "10 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyb3dx6",
+              "qty": 7,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdy6aosd",
+          "name": "Inj Ivermectin",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdynq1zc",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdylc61z",
+          "name": "Inj. Lithium Antimony Thiomalate (Anthiomaline)",
+          "unit": "50 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdyuoyer",
+          "name": "Inj Dexona",
+          "unit": "5 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyhe7j0",
+              "qty": 20,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyj9gw0",
+          "name": "Inj. Prednisolone",
+          "unit": "10 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyuwl41",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdy2zfcg",
+          "name": "Inj Ranitidine",
+          "unit": "2 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyew17l",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdy5pzl5",
+          "name": "Inj Ondansetron",
+          "unit": "2 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdy78u8a",
+              "qty": 5,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyanfz6",
+          "name": "Inj. B Complex Liver Extract with Vit B12",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdy4i156",
+              "qty": 5,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdy72oqm",
+          "name": "Inj Beplex forte",
+          "unit": "10 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyzu11j",
+              "qty": 25,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdy2af3c",
+          "name": "Inj. Vit A, Vit D3, Vit E, Biotin USP 12.5mcg",
+          "unit": "10 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdymlpii",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyzuvmj",
+          "name": "Inj. Butophosphan 100mg, Cyanocobalamine  0.05mg (Recophos)",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdyubwpn",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdyxzzxa",
+          "name": "Inj. Chlorpheniramine Maleate",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdy500vf",
+              "qty": 5,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzu820x",
+          "name": "Inj. Deriphyllin",
+          "unit": "2 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdz5tg0n",
+              "qty": 15,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzg0stg",
+          "name": "Inj Mannitol",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzs28gi",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz7upb8",
+          "name": "Inj NS",
+          "unit": "100 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdz13pk2",
+          "name": "Inj RL",
+          "unit": "500 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdzt0cxf",
+          "name": "Inj D25",
+          "unit": "500 ml, 100ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzxsu3r",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzvxi23",
+          "name": "Inj Buserlin Acetate (Gynarich)",
+          "unit": "5 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdz825m0",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzn54r4",
+          "name": "Inj Cloprostenol (Pragma)",
+          "unit": "2 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdz1cd1k",
+              "qty": 40,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzw5bnx",
+          "name": "Inj. Valethamate Bromide",
+          "unit": "30 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdz7emq6",
+          "name": "Inj. Hydroxy Progesterone Caproate 250 mg (Progesym)",
+          "unit": "3ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdz0zgq1",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzoka2i",
+          "name": "Inj. Methyl Ergometrine 0.2 mg (Nexbolic)",
+          "unit": "20 ml",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdzqc02m",
+          "name": "Inj. Sodium bicarbonate (7.5% W/V)",
+          "unit": "100ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzqnd74",
+              "qty": 6,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzf6o7i",
+          "name": "Tab. Doxycycline  100mg",
+          "unit": "",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzpmnga",
+              "qty": 50,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzg1iyw",
+          "name": "Tab.Enrofloxacin  150mg  (Efloxin)",
+          "unit": "10 s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzf59j5",
+              "qty": 20,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzdk2jl",
+          "name": "Bolus Oxytetracycline 500 mg",
+          "unit": "4s",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdzdvzx4",
+          "name": "Bolus Amoxirum",
+          "unit": "1.5g 6s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzodr45",
+              "qty": 50,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzko6ad",
+          "name": "Tab Amoxicillin",
+          "unit": "125 mg 10s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzhmqsw",
+              "qty": 40,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzwzn2o",
+          "name": "Bolus Ivermectin",
+          "unit": "80 mg 1s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzry6dz",
+              "qty": 50,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz2rc5v",
+          "name": "Tab. Ivermectin",
+          "unit": "10 mg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzfp782",
+              "qty": 50,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz0v4px",
+          "name": "Bolus containing Ofloxacin 1000mg and Ornidazole 2500mg",
+          "unit": "4s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdz3ic1s",
+              "qty": 100,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzxejgz",
+          "name": "Herbal Antidiarrhoel Bolus",
+          "unit": "4s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzex5ej",
+              "qty": 140,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzgmrlx",
+          "name": "Tab. Pheniramine malete",
+          "unit": "25 mg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzwuf77",
+              "qty": 50,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz4fuvc",
+          "name": "Bolus Cetrizine 50 mg",
+          "unit": "",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzc5xd9",
+              "qty": 200,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzdufyu",
+          "name": "Tab Frusemide 40 mg",
+          "unit": "10s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzhwi3o",
+              "qty": 80,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzu8ovn",
+          "name": "Tab Deriphylline",
+          "unit": "100 mg",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdz9epcq",
+          "name": "Tab Pantoprazole",
+          "unit": "20 mg",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdz5h9vf",
+          "name": "Tab Meloxicam pet",
+          "unit": "2.5 mg",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdzoh27l",
+          "name": "Tab Albendazole",
+          "unit": "600mg 4s",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdzflz47",
+          "name": "Tab. Albendazole",
+          "unit": "200mg 6s",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdzdaec1",
+          "name": "Tab. Fenbendazole 150mg & Praziquantel 50mg",
+          "unit": "10s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzpkwd7",
+              "qty": 50,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz7e6o7",
+          "name": "Bolus Oxyclozanide",
+          "unit": "4s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzvkm8w",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz5hx7u",
+          "name": "Bolus fenbendazole1.5 g",
+          "unit": "2s",
+          "reorder": null,
+          "batches": []
+        },
+        {
+          "id": "msgx6wdzmjmku",
+          "name": "Entric coated bolus with Meloxicam 100 mg and Paracetamol 2000 mg,  Serratiopeptidase 75mg  (Loxcam PS )",
+          "unit": "4s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzptccp",
+              "qty": 150,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzz186p",
+          "name": "Bolus with Meloxicam 100 mg and Paracetamol 1500 mg",
+          "unit": "4s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzjmqpf",
+              "qty": 550,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzx92fp",
+          "name": "Bolus with Flunixin Meglumine 1000mg, Serratio peptidase 100mg",
+          "unit": "2s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzrfocp",
+              "qty": 250,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz8vvrp",
+          "name": "Bolus with tissue rebuilding processor Vit E, A D3, B12, Biotin, Bromelain, Zinc sulphate, Aleo vera, L-Lysine, DL- Metionine, Choline chloride (Quick Heal)",
+          "unit": "4s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzfxnxt",
+              "qty": 100,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdztvbuv",
+          "name": "Tablet containing Vitamins and Minerals (Neurobion Forte)",
+          "unit": "30s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzhjymn",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzgm505",
+          "name": "Fertility Bolus with double Hydroxy-MHA chelated minerals and Beta carotene with fortified herbs (Estromax Bolus)",
+          "unit": "1x 2s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzjyjvk",
+              "qty": 300,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdzrqmxu",
+          "name": "Heat inducer bolus with Herbs, Vitamins and Minerals (Gestaforte Plus)",
+          "unit": "5x 4s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdzgi5h7",
+              "qty": 100,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6wdz8m9qk",
+          "name": "Bolus containing Probiotic Prebiotic Aminoacid, Enzymes & Trace minerals (P Biotic Bolus)",
+          "unit": "6s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6wdz7s2f5",
+              "qty": 168,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0ub0pq",
+          "name": "Levofloxacin 20mg, Ornidazole 25mg, Alpha Tocopherol 5mg IU (Lenovo IU)",
+          "unit": "60 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we027t34",
+              "qty": 20,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we08yx8i",
+          "name": "Uterine Cleanzer with blend of Herbal Extracts (Utrocleanz)",
+          "unit": "1 L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0dfqj6",
+              "qty": 7,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0o9x3o",
+          "name": "Intra mammary tube with Cephalexin 100mg, Neomycin 100mg,Prednisolone 10mg",
+          "unit": "5g",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0ozl8a",
+              "qty": 300,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0b1kfj",
+          "name": "Poly herbal liquid for Respiratory Discomfort (Natcof)",
+          "unit": "300 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0730x8",
+              "qty": 15,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0uywd5",
+          "name": "Liquid containing Enrofloxacin and Ambroxol HCL (Meriquin AX)",
+          "unit": "500ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0e7rhx",
+              "qty": 4,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we06l5zr",
+          "name": "Herbal Digestive Powder (Digact Powder)",
+          "unit": "50g",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we04589b",
+              "qty": 100,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0hbl7c",
+          "name": "Tetracycline HCL Powder",
+          "unit": "100g",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0azydl",
+              "qty": 20,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we07uzel",
+          "name": "Homogenous Mixture  Tonic Each 1000 ml  Contains -Calcium (35000mg), Phosphorus (17500 mg )  Zinc (30 mg), Magnesium (300 mg) Vitamin B12 (2000 mcg),Vitamin D3 (200000IU, Biotin (20mg) (Caltramin Gold)",
+          "unit": "20L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we000kh5",
+              "qty": 12,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we024t3l",
+          "name": "Nervine tonic containing Vitamins, Minerals, Amino acids (Meconerve)",
+          "unit": "1L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0fybfz",
+              "qty": 4,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we01x14a",
+          "name": "Feed supplement with Vitamins, Chelated minerals & organic Selenium (zintrase chelated)",
+          "unit": "20kg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we04inbh",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we02ksc2",
+          "name": "Supplement with MCHC  Calcium, Phosphorus and Vitamin D (orcal p granules)",
+          "unit": "5 kg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0o4ypa",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0i8moc",
+          "name": "Liquid containing Instant energy fortified with Liver and Yeast extract (kickstart)",
+          "unit": "1L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0d7izc",
+              "qty": 5,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0h1z5p",
+          "name": "Liquid containing Vitamin A,D, E Biotin and Selenium (Lavitone H Liquid)",
+          "unit": "1 L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0raf5a",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0i62jf",
+          "name": "Liver tonic Containing Tricholine Citrate , Lipotoric Factor, Protein Hydrolysate, Inositol, Biotin , Vit E, Selenium , Copper,Tephrosa purpurea, Cobalt, Iron ,Vit B12 and Silymarin 0.5mg/ml (Bexoliv)",
+          "unit": "5L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0dvc44",
+              "qty": 5,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0lfd5x",
+          "name": "Herbal Liver Tonic (Iris fresh)",
+          "unit": "5L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0crtpg",
+              "qty": 8,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0rlodv",
+          "name": "Anti inflammatory Ointment for mastitis, arthritis etc ( Healant)",
+          "unit": "100g",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0bjmpz",
+              "qty": 100,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0kcrl1",
+          "name": "Analgesic and Anti inflammatory Ointment (pain o vet)",
+          "unit": "1 kg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we00bt19",
+              "qty": 4,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0t6ggv",
+          "name": "Herbal Wound healing Spray containing Taliparna 250 mg, Nimba 250 mg, Bhutrina 250 gm , Devadaru 250 gm (D Mag)",
+          "unit": "120 ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0vegmu",
+              "qty": 50,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we02bpdg",
+          "name": "Anti Fungal emulsion for skin infections (Dermo vet)",
+          "unit": "1 kg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we029udi",
+              "qty": 4,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we0i2x3i",
+          "name": "Powder containing HMTBa Zinc, Copper, Manganese,Selenium & Biotin (Lminovet)",
+          "unit": "1kg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we0zr3uh",
+              "qty": 4,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we16nzbk",
+          "name": "Herbal Wound Healing Ointment (Himax)",
+          "unit": "1kg",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1jmti8",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we1hj26m",
+          "name": "Liquid containing Anti-Stress Multi Vitamin and Minerals (Vimboost)",
+          "unit": "5L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1n9kqd",
+              "qty": 2,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we10h7fs",
+          "name": "Liquid containing Trisodium citrate-12gm, DL- Methionine-500mg, Zinc sulphate- 1000mg, Copper sulphate-5mg, Vitamin C-750mg, Vitamin B1-15 mg, Vitamin B3- 75mg, B5-15mg, B6-20mg B12- 75mg  (Mastobest)",
+          "unit": "500ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1382b1",
+              "qty": 6,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we1ffw86",
+          "name": "Haematinic Liquid (Hemobest)",
+          "unit": "5L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we19mo88",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we1nzira",
+          "name": "Liquid containing Cypermethrin",
+          "unit": "1L",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1xl0ub",
+              "qty": 24,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we106iz5",
+          "name": "Inj.Bupaevaquone",
+          "unit": "30ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1rpu30",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we1s0jar",
+          "name": "Inj diminazine aceturate",
+          "unit": "90ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1xwxtv",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we1eq0h9",
+          "name": "Inj calcium boro gluconate",
+          "unit": "450ml",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1jk0iq",
+              "qty": 3,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we1l5n37",
+          "name": "Albendazole syrup",
+          "unit": "1 ltr",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1u0xlx",
+              "qty": 10,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        },
+        {
+          "id": "msgx6we1r5o9o",
+          "name": "Inj penicillin streptomycin 2.5gm",
+          "unit": "1s",
+          "reorder": null,
+          "batches": [
+            {
+              "id": "msgx6we1f4ncd",
+              "qty": 35,
+              "expiry": null,
+              "addedDate": "2026-08-06"
+            }
+          ]
+        }
+      ],
+      "logs": {
+        "2026-08-05": {
+          "msfsjwp9z8vtz": [
+            {
+              "id": "msfsz07xlfaic",
+              "qty": 2,
+              "op": "12"
+            },
+            {
+              "id": "msfszcqum61li",
+              "qty": 2,
+              "op": "12"
+            },
+            {
+              "id": "msfszjului4mq",
+              "qty": 4,
+              "op": "22"
+            },
+            {
+              "id": "msfszntjrb1t7",
+              "qty": 11,
+              "op": "12"
+            },
+            {
+              "id": "msfsztn5mhdpg",
+              "qty": 6,
+              "op": "2222"
+            },
+            {
+              "id": "msfszxylkftgm",
+              "qty": 1,
+              "op": ""
+            },
+            {
+              "id": "msfxvllyn4tnr",
+              "qty": 3,
+              "op": ""
+            }
+          ],
+          "msfsm051197lm": [
+            {
+              "id": "msft0ekj7skg7",
+              "qty": 12,
+              "op": "3"
+            },
+            {
+              "id": "msft0oubs7xdx",
+              "qty": 1,
+              "op": ""
+            }
+          ]
+        },
+        "2026-08-01": {
+          "msfsjwp9z8vtz": [
+            {
+              "id": "msgadwarq3zx3",
+              "qty": 3,
+              "op": "1/101"
+            },
+            {
+              "id": "msgaekzqgzufx",
+              "qty": 2,
+              "op": "3/301"
+            }
+          ],
+          "msfsm051197lm": [
+            {
+              "id": "msgaewpqewpr2",
+              "qty": 2,
+              "op": "5/5"
+            },
+            {
+              "id": "msgaf2dh29fwx",
+              "qty": 2,
+              "op": "7/7"
+            }
+          ]
+        }
+      },
+      "updatedAt": "2026-08-06T02:52:05.287Z"
+    }
+  },
+  "pushSubscriptions": {},
+  "lastNotified": {}
+}
