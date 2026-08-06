@@ -1,0 +1,4 @@
+data.json
+vapid.json
+node_modules/
+.env

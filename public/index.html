@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medicine Ledger</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1F6E5C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ledger">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231F6E5C'/%3E%3Cpath d='M10.8 18.2 5.6 13a4 4 0 1 1 5.6-5.6l.8.8.8-.8a4 4 0 1 1 5.6 5.6l-5.6 5.6a.9.9 0 0 1-1.2 0Z' fill='none' stroke='%23ffffff' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231F6E5C'/%3E%3Cpath d='M10.8 18.2 5.6 13a4 4 0 1 1 5.6-5.6l.8.8.8-.8a4 4 0 1 1 5.6 5.6l-5.6 5.6a.9.9 0 0 1-1.2 0Z' fill='none' stroke='%23ffffff' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EA;
+    --card:#FFFFFF;
+    --ink:#1B2620;
+    --ink-soft:#5A6A61;
+    --ink-faint:#8E9A92;
+    --line:#CBD3C6;
+    --line-strong:#A9B4A2;
+    --accent:#1F6E5C;
+    --accent-soft:#E1EFE9;
+    --accent-ink:#0F4438;
+    --warn:#A8791F;
+    --warn-soft:#FBF0DB;
+    --danger:#A6423A;
+    --danger-soft:#F8E4E1;
+    --margin-rule:#C0625A;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(27,38,32,0.06), 0 1px 1px rgba(27,38,32,0.04);
+    --c1:#1F6E5C; --c1-soft:#E1EFE9;
+    --c2:#3E5C78; --c2-soft:#E4EAF0;
+    --c3:#7A4E6B; --c3-soft:#F1E5EE;
+    --c4:#8A5A2A; --c4-soft:#F3E7D9;
+    --c5:#5D6B2F; --c5-soft:#EBEFDD;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  .ic{vertical-align:-3px;flex:none;}
+  .app-shell{display:flex;min-height:100vh;align-items:stretch;}
+
+  .sidebar{
+    width:216px;flex:none;background:var(--card);border-right:1px solid var(--line);
+    padding:22px 14px;display:flex;flex-direction:column;gap:18px;
+  }
+  .brand{display:flex;align-items:center;gap:9px;padding:0 6px;}
+  .brand .mark{width:28px;height:28px;border-radius:7px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none;}
+  .brand .mark svg{width:16px;height:16px;stroke:#fff;}
+  .brand h1{font-family:'Fraunces',serif;font-weight:600;font-size:17px;margin:0;letter-spacing:-0.01em;line-height:1.15;}
+  .brand .sub{font-size:10.5px;color:var(--ink-faint);}
+
+  nav.navlist{display:flex;flex-direction:column;gap:2px;}
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+    font-size:13.5px;font-weight:500;color:var(--ink-soft);cursor:pointer;border:none;background:transparent;
+    text-align:left;width:100%;position:relative;transition:background .15s ease,color .15s ease;
+  }
+  .nav-item svg{width:17px;height:17px;stroke:currentColor;flex:none;}
+  .nav-item:hover{background:var(--paper);color:var(--ink);}
+  .nav-item.active{background:var(--accent-soft);color:var(--accent-ink);}
+  .nav-item .dot{
+    margin-left:auto;min-width:16px;height:16px;border-radius:20px;background:var(--danger);
+    color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 4px;
+  }
+  .sidebar-foot{margin-top:auto;font-size:11px;color:var(--ink-faint);padding:0 6px;}
+  .save-state{font-size:11px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;}
+  .save-state.saved{color:var(--accent);}
+  .footer-meta{font-size:10.5px;color:var(--ink-faint);line-height:1.6;margin-bottom:6px;}
+  .footer-meta .ic{margin-right:4px;}
+  .banner{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;margin-bottom:18px;font-size:13px;border:1px solid transparent;}
+  .banner.warn{background:var(--warn-soft);color:var(--warn);border-color:#F1DFB0;}
+  .banner .btxt{flex:1;}
+  .banner .bactions{display:flex;gap:6px;flex:none;}
+  .banner button{font-size:12px;font-weight:500;padding:5px 10px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer;}
+  .banner button:hover{background:rgba(0,0,0,0.05);}
+
+  .content{flex:1;min-width:0;padding:26px 30px 60px;max-width:1040px;}
+  .content-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:18px;}
+  .content-head h2{font-family:'Fraunces',serif;font-weight:600;font-size:23px;margin:0;letter-spacing:-0.01em;}
+  .content-head .desc{font-size:12.5px;color:var(--ink-soft);margin-top:2px;}
+
+  section.panel{display:none;}
+  section.panel.active{display:block;animation:fadeIn .22s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .field-label{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-faint);font-weight:600;display:block;margin-bottom:4px;}
+  input[type=text],input[type=number],input[type=date],input[type=month],select{
+    font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:var(--paper);
+    border:1px solid var(--line-strong);border-radius:7px;padding:8px 10px;outline:none;
+  }
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+  input[type=number]{font-family:'IBM Plex Mono',monospace;width:90px;}
+  button.btn{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;padding:8px 14px;border-radius:7px;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s ease,transform .08s ease,border-color .15s ease;}
+  button.btn:hover{background:var(--paper);}
+  button.btn:active{transform:scale(0.97);}
+  button.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+  button.btn.primary:hover{background:var(--accent-ink);}
+  button.btn.danger{color:var(--danger);border-color:var(--danger-soft);}
+  button.btn.danger:hover{background:var(--danger-soft);}
+  button.btn.small{padding:5px 10px;font-size:12px;}
+  button.icon-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--line-strong);background:var(--card);color:var(--ink-soft);cursor:pointer;font-size:15px;line-height:1;display:inline-flex;align-items:center;justify-content:center;transition:background .15s ease,transform .08s ease;}
+  button.icon-btn:hover{background:var(--paper);color:var(--ink);}
+  button.icon-btn:active{transform:scale(0.93);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+
+  /* Dashboard */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+  .stat-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);transition:transform .15s ease,box-shadow .15s ease;}
+  .stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(27,38,32,0.08);}
+  .stat-card .label{font-size:11.5px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:0.04em;font-weight:600;display:flex;align-items:center;gap:5px;}
+  .stat-card .value{font-family:'Fraunces',serif;font-size:28px;font-weight:600;margin-top:4px;}
+  .stat-card.warn .value{color:var(--warn);}
+  .stat-card.danger .value{color:var(--danger);}
+  .alert-list{display:flex;flex-direction:column;gap:1px;}
+  .alert-item{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);}
+  .alert-item:last-child{border-bottom:none;}
+  .alert-item .swatch{width:8px;height:8px;border-radius:50%;flex:none;}
+  .alert-item .info{flex:1;min-width:0;}
+  .alert-item .info .t{font-size:13.5px;font-weight:500;}
+  .alert-item .info .s{font-size:12px;color:var(--ink-soft);}
+  .pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
+  .pill.warn{background:var(--warn-soft);color:var(--warn);}
+  .pill.danger{background:var(--danger-soft);color:var(--danger);}
+  .pill.ok{background:var(--accent-soft);color:var(--accent-ink);}
+  .empty-note{color:var(--ink-soft);font-size:13.5px;padding:10px 4px;}
+  .empty-state{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 20px;color:var(--ink-faint);}
+  .empty-state .ic{margin-bottom:10px;opacity:.55;}
+  .empty-state .t{font-family:'Fraunces',serif;font-size:16px;color:var(--ink);margin-bottom:4px;}
+  .empty-state .s{font-size:13px;max-width:320px;}
+  .section-title{font-size:14px;font-weight:600;margin:22px 0 8px;font-family:'Fraunces',serif;display:flex;align-items:center;gap:6px;}
+
+  /* Today */
+  .today-row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);transition:box-shadow .15s ease;}
+  .today-row:hover{box-shadow:0 4px 14px rgba(27,38,32,0.07);}
+  .today-row-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .med-name-cell{display:flex;align-items:center;gap:9px;}
+  .swatch{width:9px;height:9px;border-radius:50%;flex:none;}
+  .med-name{font-weight:500;font-size:14px;}
+  .med-unit{font-size:12px;color:var(--ink-faint);}
+  .expiry-flag{font-size:11px;color:var(--warn);}
+  .expiry-flag.danger{color:var(--danger);}
+  .remaining-cell{font-family:'IBM Plex Mono',monospace;font-size:15px;}
+  .remaining-cell.low{color:var(--warn);}
+  .remaining-cell.empty{color:var(--danger);font-weight:500;}
+  .entry-list{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:6px;}
+  .entry-row{display:flex;align-items:center;gap:6px;}
+  .entry-row .entry-qty{width:56px;text-align:center;}
+  .entry-row .entry-op{flex:1;min-width:100px;font-family:'IBM Plex Mono',monospace;font-size:13px;}
+  .add-entry-btn{margin-top:10px;}
+
+  /* Stock */
+  .add-form{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+  .filter-bar{display:flex;gap:8px;align-items:center;margin:16px 0 4px;flex-wrap:wrap;}
+  .filter-bar input[type=text]{width:220px;}
+
+  /* Import preview modal */
+  .modal-overlay{position:fixed;inset:0;background:rgba(27,38,32,0.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+  .modal-card{background:var(--card);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.25);max-width:760px;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;}
+  .modal-head{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .modal-head h3{font-family:'Fraunces',serif;font-size:16px;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .modal-body{padding:14px 22px;overflow-y:auto;flex:1;}
+  .modal-foot{padding:12px 22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  table.preview-table{width:100%;border-collapse:collapse;font-size:13px;}
+  table.preview-table th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-faint);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line-strong);position:sticky;top:0;background:var(--card);}
+  table.preview-table td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  .preview-action{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px;display:inline-block;white-space:nowrap;}
+  .preview-action.new{background:var(--accent-soft);color:var(--accent-ink);}
+  .preview-action.partial{background:var(--paper);color:var(--ink-soft);border:1px dashed var(--line-strong);}
+  .preview-action.restock{background:var(--warn-soft);color:var(--warn);}
+  .preview-action.skip{background:var(--danger-soft);color:var(--danger);}
+  .search-wrap{position:relative;display:inline-flex;align-items:center;}
+  .search-wrap .ic{position:absolute;left:9px;color:var(--ink-faint);pointer-events:none;}
+  .search-wrap input{padding-left:30px;}
+  .pill-btn{font-size:12.5px;font-weight:500;padding:6px 12px;border-radius:20px;border:1px solid var(--line-strong);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+  .pill-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .stock-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:14px;}
+  .med-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card);box-shadow:var(--shadow);transition:transform .15s ease,box-shadow .15s ease;}
+  .med-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(27,38,32,0.09);}
+  .med-card .cap{height:6px;}
+  .med-card .body{padding:14px 16px 16px;}
+  .med-card .name{font-family:'Fraunces',serif;font-size:17px;font-weight:600;margin:0 0 2px;}
+  .med-card .unit{font-size:12px;color:var(--ink-faint);margin-bottom:10px;}
+  .stat-line{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--ink-soft);}
+  .stat-line b{font-family:'IBM Plex Mono',monospace;color:var(--ink);font-weight:500;}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin-top:8px;margin-right:5px;}
+  .badge.ok{background:var(--accent-soft);color:var(--accent-ink);}
+  .badge.low{background:var(--warn-soft);color:var(--warn);}
+  .badge.empty{background:var(--danger-soft);color:var(--danger);}
+  .badge.unset{background:var(--paper);color:var(--ink-soft);border:1px dashed var(--line-strong);}
+  .remaining-cell.unset{color:var(--ink-faint);font-family:'Inter',sans-serif;font-size:12px;}
+  .med-card .actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+  .restock-row{display:flex;gap:6px;margin-top:10px;align-items:center;flex-wrap:wrap;}
+  .restock-row input{width:70px;}
+  .restock-row input[type=date]{width:130px;}
+  .edit-form{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+  .edit-form .row2{display:flex;gap:8px;}
+  .edit-form input{width:100%;}
+  .batch-toggle{font-size:12px;color:var(--accent-ink);cursor:pointer;margin-top:10px;font-weight:500;background:none;border:none;padding:0;}
+  .batch-list{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px;}
+  .batch-row{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--line);}
+  .batch-row:last-child{border-bottom:none;}
+  .batch-row .bqty{font-family:'IBM Plex Mono',monospace;min-width:34px;}
+  .batch-row .bexp{color:var(--ink-soft);flex:1;}
+  .batch-row .bdel{margin-left:auto;}
+
+  /* Monthly */
+  .month-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+  .sheet-scroll{overflow-x:auto;border:1px solid var(--line-strong);border-radius:8px;}
+  table.sheet{border-collapse:collapse;width:100%;min-width:520px;background:var(--card);}
+  table.sheet th,table.sheet td{border-bottom:1px solid var(--line);padding:7px 10px;font-size:13px;text-align:right;white-space:nowrap;}
+  table.sheet thead th{text-align:right;font-family:'Inter',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-faint);font-weight:600;background:var(--paper);position:sticky;top:0;border-bottom:1px solid var(--line-strong);}
+  table.sheet th:first-child,table.sheet td:first-child{text-align:left;font-family:'IBM Plex Mono',monospace;border-right:2px solid var(--margin-rule);position:sticky;left:0;background:var(--card);}
+  table.sheet thead th:first-child{background:var(--paper);}
+  table.sheet td.weekend{background:#F6F4EC;}
+  table.sheet tbody tr:hover td{background:var(--accent-soft);}
+  table.sheet tbody tr:hover td:first-child{background:#DCEBE4;}
+  table.sheet td.sheet-cell{cursor:pointer;font-family:'IBM Plex Mono',monospace;transition:background .12s ease;}
+  table.sheet td.sheet-cell:hover{background:var(--accent-soft) !important;}
+  table.sheet tfoot td{font-weight:600;font-family:'IBM Plex Mono',monospace;border-top:2px solid var(--line-strong);border-bottom:none;background:var(--paper);}
+  table.sheet tfoot td:first-child{font-family:'Inter',sans-serif;background:var(--paper);}
+  .day-total-col{color:var(--ink-soft);}
+  .month-summary{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;}
+  .summary-chip{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--ink-soft);}
+  .summary-chip b{font-family:'IBM Plex Mono',monospace;color:var(--ink);font-weight:500;}
+
+  @media(max-width:760px){
+    .app-shell{flex-direction:column;}
+    .sidebar{width:100%;flex-direction:row;align-items:center;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);padding:10px 12px;gap:14px;}
+    .brand{flex:none;}
+    nav.navlist{flex-direction:row;gap:4px;}
+    .nav-item{white-space:nowrap;}
+    .sidebar-foot{display:none;}
+    .content{padding:20px 16px 50px;}
+  }
+  @media print{
+    .sidebar,.content-head .desc,.filter-bar,.add-form,.actions,.restock-row,.batch-toggle{display:none !important;}
+    .content{padding:0;max-width:none;}
+    .card{box-shadow:none;border:none;}
+  }
+
+  /* Auth screen — styled to match the Ruth project's login look:
+     warm paper background, dark-ink pill buttons, soft rounded cards.
+     Scoped entirely to #authScreen so the rest of the app (Dashboard,
+     Stock, Monthly sheet) keeps its own teal ledger theme untouched. */
+  #authScreen{
+    --paper:#F9F7F3; --card:#FFFFFF; --ink:#1B1B1B;
+    --ink-soft:rgba(27,27,27,0.55); --ink-faint:rgba(27,27,27,0.35);
+    --line:rgba(27,27,27,0.08); --line-strong:rgba(27,27,27,0.15);
+    --accent:#1B1B1B; --accent-soft:#F3ECE3; --accent-ink:#000000;
+    --shadow:0 2px 10px rgba(27,27,27,0.05), 0 8px 24px rgba(27,27,27,0.04);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+    background:var(--paper);
+  }
+  #authScreen button.btn{border-radius:999px;}
+  #authScreen input[type=text],#authScreen input[type=email],#authScreen input[type=password]{border-radius:16px;}
+  .auth-card{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:28px 26px;}
+  .auth-brand{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+  .auth-brand .mark{width:30px;height:30px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex:none;}
+  .auth-brand .mark svg{width:17px;height:17px;stroke:#fff;}
+  .auth-brand h1{font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0;}
+  .auth-tabs{display:flex;gap:2px;margin-bottom:18px;background:var(--paper);border-radius:999px;padding:3px;}
+  .auth-tab{flex:1;text-align:center;font-size:12.5px;font-weight:500;padding:7px 4px;border-radius:999px;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;}
+  .auth-tab.active{background:var(--card);color:var(--ink);box-shadow:var(--shadow);}
+  .auth-field{margin-bottom:12px;}
+  .auth-field input{width:100%;}
+  .auth-submit{width:100%;justify-content:center;margin-top:4px;}
+  .auth-error{background:var(--danger-soft);color:var(--danger);font-size:12.5px;padding:8px 10px;border-radius:12px;margin-bottom:12px;display:none;}
+  .auth-error.show{display:block;}
+  .join-code-box{background:var(--accent-soft);color:var(--accent-ink);border-radius:14px;padding:12px;text-align:center;margin-bottom:14px;}
+  .join-code-box .code{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;letter-spacing:0.08em;}
+  .auth-form{display:none;}
+  .auth-form.active{display:block;}
+  .profile-line{font-size:12px;color:var(--ink-soft);padding:0 6px 10px;border-bottom:1px solid var(--line);margin-bottom:10px;}
+  .profile-line b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 1 1 7-7l1 1 1-1a5 5 0 1 1 7 7l-7 7a1 1 0 0 1-1.4 0Z"></path></svg></div>
+      <h1>Medicine Ledger</h1>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-mode="login">Log in</button>
+      <button class="auth-tab" data-mode="create">Sign up</button>
+    </div>
+    <div class="auth-error" id="authError"></div>
+
+    <form class="auth-form active" id="loginForm">
+      <div class="auth-field"><span class="field-label">Username or email</span><input type="text" id="loginIdentifier" autocomplete="username" required></div>
+      <div class="auth-field"><span class="field-label">Password</span><input type="password" id="loginPassword" autocomplete="current-password" required></div>
+      <button class="btn primary auth-submit" type="submit">Log in</button>
+    </form>
+
+    <form class="auth-form" id="createForm">
+      <div class="auth-field"><span class="field-label">Hospital name</span><input type="text" id="createHospital" required></div>
+      <div class="auth-field"><span class="field-label">Username</span><input type="text" id="createUsername" autocomplete="username" required></div>
+      <div class="auth-field"><span class="field-label">Email</span><input type="email" id="createEmail" autocomplete="email" required></div>
+      <div class="auth-field"><span class="field-label">Password</span><input type="password" id="createPassword" autocomplete="new-password" required></div>
+      <button class="btn primary auth-submit" type="submit">Create account</button>
+    </form>
+  </div>
+</div>
+
+<div class="app-shell" id="appShell" style="display:none;">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a5 5 0 1 1 7-7l1 1 1-1a5 5 0 1 1 7 7l-7 7a1 1 0 0 1-1.4 0Z"></path></svg></div>
+      <div>
+        <h1>Medicine Ledger</h1>
+        <div class="sub">Stock &amp; dose tracker</div>
+      </div>
+    </div>
+    <nav class="navlist">
+      <button class="nav-item active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"></rect><rect x="14" y="3" width="7" height="5" rx="1.5"></rect><rect x="14" y="12" width="7" height="9" rx="1.5"></rect><rect x="3" y="16" width="7" height="5" rx="1.5"></rect></svg>
+        <span>Dashboard</span>
+        <span class="dot" id="dashDot" style="display:none;"></span>
+      </button>
+      <button class="nav-item" data-tab="today">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"></rect><path d="M3 9.5h18M8 3v3M16 3v3"></path><path d="m8.5 14 2 2 4-4"></path></svg>
+        <span>Today</span>
+      </button>
+      <button class="nav-item" data-tab="stock">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z"></path><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5"></path></svg>
+        <span>Stock</span>
+      </button>
+      <button class="nav-item" data-tab="monthly">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 10h18M9 4v17M15 4v17"></path></svg>
+        <span>Monthly sheet</span>
+      </button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="profile-line" id="profileLine"></div>
+      <div class="footer-meta" id="footerMeta"></div>
+      <div class="save-state" id="saveState"></div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">
+        <button class="btn small" id="notifyBtn" type="button"></button>
+        <button class="btn small" id="backupExportBtn" type="button"></button>
+        <button class="btn small" id="backupImportBtn" type="button"></button>
+        <input type="file" id="backupFileInput" accept="application/json" style="display:none;">
+        <button class="btn small danger" id="logoutBtn" type="button">Log out</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <section class="panel active" id="panel-dashboard"></section>
+    <section class="panel" id="panel-today"></section>
+    <section class="panel" id="panel-stock"></section>
+    <section class="panel" id="panel-monthly"></section>
+  </main>
+</div>
+
+<div id="importPreviewModal" style="display:none;"></div>
+
+<script>
+(function(){
+
+  var COLORS = [
+    {fill:'var(--c1)', soft:'var(--c1-soft)'},
+    {fill:'var(--c2)', soft:'var(--c2-soft)'},
+    {fill:'var(--c3)', soft:'var(--c3-soft)'},
+    {fill:'var(--c4)', soft:'var(--c4-soft)'},
+    {fill:'var(--c5)', soft:'var(--c5-soft)'}
+  ];
+  var EXPIRY_SOON_DAYS = 30;
+
+  var ICON_PATHS = {
+    dashboard: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+    calendar: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v3M16 3v3"/><path d="m8.5 14 2 2 4-4"/>',
+    box: '<path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z"/><path d="M3 7.5V16l9 4.5 9-4.5V7.5M12 12v8.5"/>',
+    grid: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18M9 4v17M15 4v17"/>',
+    alertTriangle: '<path d="M12 3.2 2 20.5h20L12 3.2Z"/><path d="M12 9.5v5M12 17h.01"/>',
+    checkCircle: '<circle cx="12" cy="12" r="9"/><path d="m8.3 12.3 2.4 2.4L16 9.3"/>',
+    xCircle: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    trash: '<path d="M4 7h16M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7M6 7l1 13a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8l1-13"/>',
+    edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    download: '<path d="M12 3v13m0 0 4-4m-4 4-4-4"/><path d="M4 19h16"/>',
+    upload: '<path d="M12 21V8m0 0 4 4m-4-4-4 4"/><path d="M4 21h16"/>',
+    print: '<path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="1.5"/><path d="M6 17v4h12v-4"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    pill: '<rect x="4.5" y="9.5" width="15" height="5" rx="2.5" transform="rotate(-45 12 12)"/><path d="M9.3 14.7 14.7 9.3"/>',
+    shieldCheck: '<path d="M12 3.5 4.5 6v6c0 4.5 3 7 7.5 8.5 4.5-1.5 7.5-4 7.5-8.5V6L12 3.5Z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4"/>',
+    bell: '<path d="M6 8.5a6 6 0 0 1 12 0c0 4.5 1.5 6 2 6.5H4c.5-.5 2-2 2-6.5Z"/><path d="M10 19a2 2 0 0 0 4 0"/>'
+  };
+  function icon(name, size){
+    size = size || 15;
+    return '<svg class="ic" viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICON_PATHS[name]||'')+'</svg>';
+  }
+
+  var state = {
+    medicines: [],
+    logs: {},
+    tab: 'dashboard',
+    todayDate: todayStr(),
+    month: todayStr().slice(0,7),
+    stockFilter: 'all',
+    stockSearch: '',
+    openBatches: {}
+  };
+
+  var saveTimer = null;
+
+  function todayStr(){
+    var d = new Date();
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function round(n){ return Math.round(n*100)/100; }
+
+  function monthEndDate(ym){
+    // 'YYYY-MM' -> 'YYYY-MM-DD' of the last day of that month
+    var p = ym.split('-');
+    var y = Number(p[0]), m = Number(p[1]);
+    var last = new Date(y, m, 0).getDate();
+    return ym+'-'+String(last).padStart(2,'0');
+  }
+  function effectiveExpiryDate(expiry){
+    if(!expiry) return null;
+    return expiry.length === 7 ? monthEndDate(expiry) : expiry; // 'YYYY-MM' -> end of month; full dates pass through unchanged
+  }
+  function daysUntil(dateStr){
+    if(!dateStr) return null;
+    var eff = effectiveExpiryDate(dateStr);
+    var today = new Date(todayStr()+'T00:00:00');
+    var target = new Date(eff+'T00:00:00');
+    return Math.round((target - today) / 86400000);
+  }
+  function formatExpiry(expiry){
+    if(!expiry) return '';
+    var p = expiry.split('-');
+    var y = Number(p[0]), m = Number(p[1]);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return (months[m-1]||'')+' '+y;
+  }
+
+  // ---------- API CLIENT ----------
+  // Talks to our own zero-dependency Node backend (server.js) — same origin,
+  // so no API keys or external service config needed here at all.
+  var API_BASE = '';
+  var session = null;   // { user: {id, hospitalName, username, email} }
+
+  function getToken(){ return localStorage.getItem('medledger_token'); }
+  function setToken(t){ if(t) localStorage.setItem('medledger_token', t); else localStorage.removeItem('medledger_token'); }
+
+  async function api(path, method, body){
+    var headers = {'Content-Type':'application/json'};
+    var token = getToken();
+    if(token) headers['Authorization'] = 'Bearer '+token;
+    var res = await fetch(API_BASE+path, {
+      method: method || 'GET',
+      headers: headers,
+      body: body ? JSON.stringify(body) : undefined
+    });
+    var data = null;
+    try{ data = await res.json(); }catch(e){}
+    if(!res.ok){
+      var err = new Error((data && data.error) || ('Request failed ('+res.status+')'));
+      err.status = res.status;
+      throw err;
+    }
+    return data;
+  }
+
+  async function loadState(){
+    try{
+      var data = await api('/api/ledger', 'GET');
+      state.medicines = data.medicines || [];
+      state.logs = data.logs || {};
+    }catch(e){
+      state.medicines = []; state.logs = {};
+    }
+    state.medicines.forEach(function(med){
+      if(!med.batches){
+        med.batches = [{id: uid(), qty: med.total || 0, expiry: med.expiry || null, addedDate: todayStr()}];
+      }
+    });
+    // Migrate older logs format (a plain number per medicine/day) to entry arrays.
+    for(var d in state.logs){
+      var dayObj = state.logs[d];
+      for(var medId in dayObj){
+        var val = dayObj[medId];
+        if(typeof val === 'number'){
+          dayObj[medId] = val > 0 ? [{id: uid(), qty: val, op: ''}] : [];
+        }
+      }
+    }
+  }
+
+  function flagSaving(){
+    var el = document.getElementById('saveState');
+    el.textContent = 'saving…'; el.classList.remove('saved');
+  }
+  function flagSaved(){
+    var el = document.getElementById('saveState');
+    el.textContent = 'saved'; el.classList.add('saved');
+    clearTimeout(el._t);
+    el._t = setTimeout(function(){ el.textContent=''; }, 1500);
+  }
+  function persist(){
+    flagSaving();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async function(){
+      try{
+        await api('/api/ledger', 'PUT', { medicines: state.medicines, logs: state.logs });
+        state.lastSaved = Date.now();
+        flagSaved();
+        updateFooterMeta();
+      }catch(e){
+        document.getElementById('saveState').textContent = 'save failed — retrying';
+        setTimeout(persist, 2000);
+      }
+    }, 350);
+  }
+
+  // Backup-reminder metadata is per-browser (harmless if reset) — kept in localStorage
+  // since this file runs as a real deployed webpage, not inside a Claude artifact sandbox.
+  function getLastBackupTs(){
+    var v = localStorage.getItem('medledger_last_backup');
+    return v ? Number(v) : null;
+  }
+  function setLastBackupTs(ts){
+    localStorage.setItem('medledger_last_backup', String(ts));
+  }
+  function daysSince(ts){
+    return Math.floor((Date.now() - ts) / 86400000);
+  }
+  function relativeSaved(){
+    if(!state.lastSaved) return 'not saved yet';
+    var secs = Math.round((Date.now() - state.lastSaved)/1000);
+    if(secs < 5) return 'just now';
+    if(secs < 60) return secs+'s ago';
+    var mins = Math.round(secs/60);
+    if(mins < 60) return mins+'m ago';
+    return new Date(state.lastSaved).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+  function updateFooterMeta(){
+    var el = document.getElementById('footerMeta');
+    if(!el) return;
+    var backupTs = getLastBackupTs();
+    var backupText = backupTs ? daysSince(backupTs)+'d ago' : 'never';
+    el.innerHTML =
+      '<div>'+icon('clock',12)+(state.lastSaved ? 'Saved '+relativeSaved() : 'No changes yet')+'</div>'+
+      '<div>'+icon('shieldCheck',12)+'Backup: '+backupText+'</div>';
+  }
+
+  // logs[date][medId] is an array of entries: [{id, qty, op}, ...]
+  // op = OP (outpatient) card number tied to that dispense, optional.
+  function dayEntries(date, medId){
+    return (state.logs[date] && state.logs[date][medId]) || [];
+  }
+  function dayTotal(date, medId){
+    return dayEntries(date, medId).reduce(function(s,e){ return s + (Number(e.qty)||0); }, 0);
+  }
+  function usedFor(medId){
+    var total = 0;
+    for(var d in state.logs){
+      if(state.logs[d] && state.logs[d][medId]) total += dayTotal(d, medId);
+    }
+    return round(total);
+  }
+  function usedBetween(medId, startInclusive, endInclusive){
+    var total = 0;
+    for(var d in state.logs){
+      if(d >= startInclusive && d <= endInclusive) total += dayTotal(d, medId);
+    }
+    return round(total);
+  }
+  function usedBefore(medId, dateExclusive){
+    var total = 0;
+    for(var d in state.logs){
+      if(d < dateExclusive) total += dayTotal(d, medId);
+    }
+    return round(total);
+  }
+  function totalQty(med){
+    return (med.batches||[]).reduce(function(s,b){ return s + (Number(b.qty)||0); }, 0);
+  }
+  function stockAddedBetween(med, startInclusive, endInclusive){
+    return (med.batches||[]).reduce(function(s,b){
+      var d = b.addedDate || '0000-00-00';
+      return (d >= startInclusive && d <= endInclusive) ? s + (Number(b.qty)||0) : s;
+    }, 0);
+  }
+  function stockAddedBefore(med, dateExclusive){
+    return (med.batches||[]).reduce(function(s,b){
+      var d = b.addedDate || '0000-00-00';
+      return d < dateExclusive ? s + (Number(b.qty)||0) : s;
+    }, 0);
+  }
+  function monthBounds(ym){
+    var p = ym.split('-'); var y = Number(p[0]), m = Number(p[1]);
+    var last = daysInMonth(ym);
+    return { start: ym+'-01', end: ym+'-'+String(last).padStart(2,'0') };
+  }
+  function remainingTotal(med){ return round(totalQty(med) - usedFor(med.id)); }
+
+  function allocatedBatches(med){
+    var batches = (med.batches||[]).slice().sort(function(a,b){
+      var ea = a.expiry ? new Date(a.expiry).getTime() : Infinity;
+      var eb = b.expiry ? new Date(b.expiry).getTime() : Infinity;
+      return ea - eb;
+    });
+    var used = usedFor(med.id);
+    return batches.map(function(b){
+      var qty = Number(b.qty) || 0;
+      var consumed = Math.min(qty, Math.max(0,used));
+      used -= consumed;
+      return {id:b.id, qty:qty, expiry:b.expiry, addedDate:b.addedDate, remaining: round(qty - consumed)};
+    });
+  }
+
+  function statusFor(med){
+    if(!med.batches || med.batches.length === 0) return 'unset';
+    var rem = remainingTotal(med);
+    if(rem <= 0) return 'empty';
+    var tot = totalQty(med);
+    var threshold = (med.reorder !== undefined && med.reorder !== null && med.reorder !== '') ? Number(med.reorder) : tot * 0.2;
+    if(rem <= threshold) return 'low';
+    return 'ok';
+  }
+  function colorFor(index){ return COLORS[index % COLORS.length]; }
+
+  function expiryAlerts(){
+    var alerts = [];
+    state.medicines.forEach(function(med, idx){
+      allocatedBatches(med).forEach(function(b){
+        if(b.remaining > 0 && b.expiry){
+          var d = daysUntil(b.expiry);
+          if(d <= EXPIRY_SOON_DAYS){
+            alerts.push({med:med, idx:idx, batch:b, days:d});
+          }
+        }
+      });
+    });
+    alerts.sort(function(a,b){ return a.days - b.days; });
+    return alerts;
+  }
+  function lowStockList(){
+    return state.medicines
+      .map(function(med, idx){ return {med:med, idx:idx, status: statusFor(med)}; })
+      .filter(function(x){ return x.status === 'low' || x.status === 'empty'; })
+      .sort(function(a,b){ return remainingTotal(a.med) - remainingTotal(b.med); });
+  }
+  function needsSetupList(){
+    return state.medicines
+      .map(function(med, idx){ return {med:med, idx:idx}; })
+      .filter(function(x){ return statusFor(x.med) === 'unset'; });
+  }
+
+  function daysInMonth(ym){ var p=ym.split('-'); return new Date(Number(p[0]), Number(p[1]), 0).getDate(); }
+  function weekdayShort(y,m,d){ return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(y,m-1,d).getDay()]; }
+  function isWeekend(y,m,d){ var wd=new Date(y,m-1,d).getDay(); return wd===0||wd===6; }
+
+  function escapeHtml(str){
+    return String(str||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
+  }
+
+  // ---------- DASHBOARD ----------
+
+  function renderDashboard(){
+    var panel = document.getElementById('panel-dashboard');
+    var todayDoses = 0;
+    if(state.logs[state.todayDate]){
+      for(var k in state.logs[state.todayDate]) todayDoses += Number(state.logs[state.todayDate][k])||0;
+    }
+    var expAlerts = expiryAlerts();
+    var lowAlerts = lowStockList();
+    var expCount = expAlerts.length;
+    var lowCount = lowAlerts.length;
+
+    var dot = document.getElementById('dashDot');
+    var totalDot = expCount + lowCount;
+    if(totalDot > 0){ dot.style.display='flex'; dot.textContent = totalDot > 9 ? '9+' : totalDot; }
+    else { dot.style.display='none'; }
+
+    var backupTs = getLastBackupTs();
+    var dismissUntil = Number(localStorage.getItem('medledger_backup_dismiss_until') || 0);
+    var shouldNag = state.medicines.length > 0 && (!backupTs || daysSince(backupTs) >= 7) && Date.now() > dismissUntil;
+    var banner = shouldNag ?
+      '<div class="banner warn">'+icon('alertTriangle',16)+
+      '<span class="btxt">'+(backupTs ? 'It\'s been '+daysSince(backupTs)+' days since your last backup.' : 'You haven\'t backed up your data yet.')+' Your data lives only in this browser.</span>'+
+      '<span class="bactions"><button id="bannerBackupBtn">Back up now</button><button id="bannerDismiss">Dismiss</button></span></div>'
+      : '';
+
+    var setupCount = needsSetupList().length;
+    var statCards =
+      '<div class="stat-card"><div class="label">'+icon('box',13)+'Medicines tracked</div><div class="value">'+state.medicines.length+'</div></div>'+
+      '<div class="stat-card '+(lowCount?'warn':'')+'"><div class="label">'+icon('alertTriangle',13)+'Stock alerts</div><div class="value">'+lowCount+'</div></div>'+
+      '<div class="stat-card '+(expCount?'danger':'')+'"><div class="label">'+icon('clock',13)+'Expiring within '+EXPIRY_SOON_DAYS+'d</div><div class="value">'+expCount+'</div></div>'+
+      '<div class="stat-card"><div class="label">'+icon('pill',13)+'Doses logged today</div><div class="value">'+round(todayDoses)+'</div></div>'+
+      (setupCount ? '<div class="stat-card"><div class="label">'+icon('edit',13)+'Needs stock entered</div><div class="value">'+setupCount+'</div></div>' : '');
+
+    var expiryRows = expAlerts.length ? expAlerts.map(function(a){
+      var col = colorFor(a.idx);
+      var lvl = a.days < 0 ? 'danger' : 'warn';
+      var label = a.days < 0 ? Math.abs(a.days)+'d overdue' : (a.days===0 ? 'expires today' : a.days+'d left');
+      return '<div class="alert-item"><span class="swatch" style="background:'+col.fill+'"></span>'+
+        '<div class="info"><div class="t">'+escapeHtml(a.med.name)+'</div><div class="s">'+a.batch.remaining+' '+escapeHtml(a.med.unit||'')+' in this batch · expires '+formatExpiry(a.batch.expiry)+'</div></div>'+
+        '<span class="pill '+lvl+'">'+icon(lvl==='danger'?'xCircle':'alertTriangle',11)+label+'</span></div>';
+    }).join('') : '<div class="empty-state">'+icon('checkCircle',30)+'<div class="t">All clear</div><div class="s">No batches expiring in the next '+EXPIRY_SOON_DAYS+' days.</div></div>';
+
+    var stockRows = lowAlerts.length ? lowAlerts.map(function(a){
+      var col = colorFor(a.idx);
+      var rem = remainingTotal(a.med);
+      var lvl = a.status === 'empty' ? 'danger' : 'warn';
+      return '<div class="alert-item"><span class="swatch" style="background:'+col.fill+'"></span>'+
+        '<div class="info"><div class="t">'+escapeHtml(a.med.name)+'</div><div class="s">'+rem+' '+escapeHtml(a.med.unit||'')+' remaining</div></div>'+
+        '<span class="pill '+lvl+'">'+icon(lvl==='danger'?'xCircle':'alertTriangle',11)+(a.status==='empty'?'Empty':'Low')+'</span></div>';
+    }).join('') : '<div class="empty-state">'+icon('checkCircle',30)+'<div class="t">Fully stocked</div><div class="s">Every medicine is above its alert threshold.</div></div>';
+
+    panel.innerHTML =
+      '<div class="content-head"><div><h2>Dashboard</h2><div class="desc">A quick read on stock and what needs attention</div></div>'+
+      '</div>'+
+      banner+
+      '<div class="stat-grid">'+statCards+'</div>'+
+      '<div class="grid2">'+
+        '<div class="card"><div class="section-title" style="margin-top:0;">'+icon('clock',15)+'Expiry alerts</div><div class="alert-list">'+expiryRows+'</div></div>'+
+        '<div class="card"><div class="section-title" style="margin-top:0;">'+icon('alertTriangle',15)+'Stock alerts</div><div class="alert-list">'+stockRows+'</div></div>'+
+      '</div>';
+
+    if(shouldNag){
+      document.getElementById('bannerBackupBtn').addEventListener('click', function(){
+        document.getElementById('backupExportBtn').click();
+      });
+      document.getElementById('bannerDismiss').addEventListener('click', function(){
+        localStorage.setItem('medledger_backup_dismiss_until', String(Date.now() + 3*86400000));
+        renderDashboard();
+      });
+    }
+  }
+
+  // ---------- TODAY ----------
+
+  function renderToday(){
+    var panel = document.getElementById('panel-today');
+    if(state.medicines.length === 0){
+      panel.innerHTML = '<div class="content-head"><h2>Today</h2></div><div class="card"><div class="empty-state">'+icon('pill',30)+'<div class="t">No medicines yet</div><div class="s">Add one from the Stock tab to start logging daily doses.</div></div></div>';
+      return;
+    }
+    var dateVal = state.todayDate;
+    var rowsHtml = state.medicines.map(function(med, i){
+      var entries = dayEntries(dateVal, med.id);
+      var total = dayTotal(dateVal, med.id);
+      var rem = remainingTotal(med);
+      var st = statusFor(med);
+      var col = colorFor(i);
+      var nearBatch = allocatedBatches(med).find(function(b){ return b.remaining > 0 && b.expiry; });
+      var flag = '';
+      if(nearBatch){
+        var d = daysUntil(nearBatch.expiry);
+        if(d <= EXPIRY_SOON_DAYS){
+          flag = '<span class="expiry-flag '+(d<0?'danger':'')+'" style="margin-left:8px;">'+(d<0? 'expired '+Math.abs(d)+'d ago' : 'expires in '+d+'d')+'</span>';
+        }
+      }
+      var rowsForEntries = entries.length ? entries : [{id:'', qty:'', op:''}];
+      var entryHtml = rowsForEntries.map(function(en){
+        return '<div class="entry-row" data-entry="'+(en.id||'')+'">'+
+          '<button class="icon-btn e-down" type="button" aria-label="Decrease">–</button>'+
+          '<input type="number" step="0.5" min="0" class="entry-qty" value="'+en.qty+'" placeholder="qty">'+
+          '<button class="icon-btn e-up" type="button" aria-label="Increase">+</button>'+
+          '<input type="text" class="entry-op" value="'+escapeHtml(en.op||'')+'" placeholder="OP card # (optional)">'+
+          '<button class="icon-btn e-del" type="button" aria-label="Remove entry">'+icon('trash',13)+'</button>'+
+        '</div>';
+      }).join('');
+
+      return (
+        '<div class="today-row" data-med="'+med.id+'">'+
+          '<div class="today-row-head">'+
+            '<div class="med-name-cell"><span class="swatch" style="background:'+col.fill+'"></span>'+
+              '<div><div class="med-name">'+escapeHtml(med.name)+'</div><div class="med-unit">'+escapeHtml(med.unit||'')+flag+'</div></div></div>'+
+            '<div class="row" style="gap:18px;">'+
+              '<div style="text-align:right;"><div class="field-label" style="margin-bottom:0;">Remaining</div><div class="remaining-cell '+st+'">'+(st==='unset' ? 'not stocked' : rem)+'</div></div>'+
+              '<div style="text-align:right;"><div class="field-label" style="margin-bottom:0;">Used today</div><div class="remaining-cell">'+total+'</div></div>'+
+            '</div>'+
+          '</div>'+
+          '<div class="entry-list">'+entryHtml+'</div>'+
+          '<button class="btn small add-entry-btn" type="button">'+icon('plus',12)+'Add patient / OP card</button>'+
+        '</div>'
+      );
+    }).join('');
+
+    panel.innerHTML =
+      '<div class="content-head"><div><h2>Today</h2><div class="desc">Log doses — split by OP card number when more than one patient gets the same medicine</div></div>'+
+      '<div class="row" style="gap:14px;align-items:flex-end;">'+
+        '<div><span class="field-label">Date</span><input type="date" id="todayDateInput" value="'+dateVal+'"></div>'+
+        '<button class="btn" id="exportTodayBtn" type="button">'+icon('download',14)+'Export today (Excel)</button>'+
+      '</div></div>'+
+      '<div>'+rowsHtml+'</div>';
+
+    document.getElementById('exportTodayBtn').addEventListener('click', function(){
+      exportTodayExcel(dateVal);
+    });
+
+    document.getElementById('todayDateInput').addEventListener('change', function(e){
+      state.todayDate = e.target.value || todayStr();
+      renderToday();
+    });
+
+    panel.querySelectorAll('.today-row').forEach(function(rowEl){
+      var medId = rowEl.getAttribute('data-med');
+
+      function readEntriesFromDom(){
+        var out = [];
+        rowEl.querySelectorAll('.entry-row').forEach(function(er){
+          var qty = Number(er.querySelector('.entry-qty').value) || 0;
+          var op = er.querySelector('.entry-op').value.trim();
+          var id = er.getAttribute('data-entry') || uid();
+          if(qty > 0) out.push({id:id, qty:qty, op:op});
+        });
+        return out;
+      }
+      function commit(){
+        var entries = readEntriesFromDom();
+        if(!state.logs[dateVal]) state.logs[dateVal] = {};
+        if(entries.length === 0){ delete state.logs[dateVal][medId]; } else { state.logs[dateVal][medId] = entries; }
+        persist(); renderToday(); renderDashboard(); renderMonthly();
+      }
+
+      rowEl.querySelectorAll('.entry-row').forEach(function(er){
+        var qtyInput = er.querySelector('.entry-qty');
+        qtyInput.addEventListener('change', commit);
+        er.querySelector('.entry-op').addEventListener('change', commit);
+        er.querySelector('.e-up').addEventListener('click', function(){ qtyInput.value = (Number(qtyInput.value)||0) + 1; commit(); });
+        er.querySelector('.e-down').addEventListener('click', function(){ qtyInput.value = Math.max(0,(Number(qtyInput.value)||0) - 1); commit(); });
+        er.querySelector('.e-del').addEventListener('click', function(){ qtyInput.value = 0; commit(); });
+      });
+      rowEl.querySelector('.add-entry-btn').addEventListener('click', function(){
+        if(!state.logs[dateVal]) state.logs[dateVal] = {};
+        var entries = (state.logs[dateVal][medId] || []).slice();
+        entries.push({id: uid(), qty: 1, op: ''});
+        state.logs[dateVal][medId] = entries;
+        persist(); renderToday(); renderDashboard(); renderMonthly();
+      });
+    });
+  }
+
+  // ---------- STOCK ----------
+
+  function parseImportRow(row){
+    var keys = Object.keys(row);
+    function find(cands){
+      for(var i=0;i<keys.length;i++){
+        var k = keys[i].toLowerCase().trim();
+        if(cands.indexOf(k) !== -1) return row[keys[i]];
+      }
+      return undefined;
+    }
+    function cleanStr(v){ return (v===undefined||v===null) ? '' : String(v).trim(); }
+
+    var rawName = cleanStr(find(['name','medicine','medicine name','drug','drug name','item','item name']));
+    var unit = cleanStr(find(['unit','units','uom']));
+    var name = rawName;
+
+    // Smart unit extraction: "Paracetamol (tablets)" -> splits into name + unit,
+    // but only when there's no separate Unit column to trust instead.
+    if(!unit && rawName){
+      var m = rawName.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+      if(m){ name = m[1].trim(); unit = m[2].trim(); }
+    }
+
+    var qtyRaw = find(['quantity','qty','stock','total','starting stock','current stock']);
+    var qty = null; // null = "not in the sheet at all" — distinct from an explicit 0
+    if(qtyRaw !== undefined && qtyRaw !== ''){
+      var qtyNum = Number(String(qtyRaw).replace(/,/g,'').trim());
+      if(!isNaN(qtyNum)) qty = qtyNum;
+    }
+
+    var reorderRaw = find(['reorder level','reorder','low stock alert','low stock alert at','alert level','minimum stock','min stock']);
+    var reorder = null;
+    if(reorderRaw !== undefined && reorderRaw !== ''){
+      var reorderNum = Number(String(reorderRaw).replace(/,/g,'').trim());
+      if(!isNaN(reorderNum)) reorder = reorderNum;
+    }
+
+    var expiryRaw = find(['expiry','expiry date','exp','exp date','expires','expiration']);
+    var expiry = null;
+    if(expiryRaw !== undefined && expiryRaw !== ''){
+      if(expiryRaw instanceof Date){
+        expiry = expiryRaw.getFullYear()+'-'+String(expiryRaw.getMonth()+1).padStart(2,'0');
+      }else if(typeof expiryRaw === 'number'){
+        // Excel serial date number that wasn't auto-converted to a real Date
+        try{
+          var parsedSerial = XLSX.SSF.parse_date_code(expiryRaw);
+          if(parsedSerial) expiry = parsedSerial.y+'-'+String(parsedSerial.m).padStart(2,'0');
+        }catch(e){}
+      }else{
+        var s = String(expiryRaw).trim();
+        var mmYYYY = s.match(/^(\d{1,2})[\/\-](\d{4})$/);   // "01/2027" or "01-2027"
+        var yyyyMM = s.match(/^(\d{4})[\/\-](\d{1,2})$/);   // "2027-01" or "2027/01"
+        if(mmYYYY){
+          expiry = mmYYYY[2]+'-'+mmYYYY[1].padStart(2,'0');
+        }else if(yyyyMM){
+          expiry = yyyyMM[1]+'-'+yyyyMM[2].padStart(2,'0');
+        }else{
+          var d = new Date(s);
+          if(!isNaN(d.getTime())) expiry = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+        }
+      }
+    }
+    if(!name) return null;
+    return {name:name, unit:unit, qty:qty, expiry:expiry, reorder:reorder};
+  }
+
+  var pendingImportRows = null; // set while the preview modal is open
+
+  function openImportPreview(rawRows, fileName){
+    var seen = {};
+    state.medicines.forEach(function(m){ seen[m.name.toLowerCase()] = true; });
+    pendingImportRows = rawRows.map(function(row){
+      var parsed = parseImportRow(row);
+      if(!parsed || !parsed.name){
+        return {parsed:null, action:'skip', checked:false};
+      }
+      var key = parsed.name.toLowerCase();
+      var hasQty = parsed.qty !== null && parsed.qty > 0;
+      var isExisting = !!seen[key];
+      var action = isExisting ? (hasQty ? 'restock' : 'partial') : (hasQty ? 'new' : 'partial');
+      seen[key] = true; // so duplicate rows further down the same sheet are recognized too
+      return {parsed:parsed, action:action, checked:true};
+    });
+    renderImportPreview(fileName);
+  }
+
+  function actionLabel(action){
+    if(action === 'skip') return 'Skip — no name';
+    if(action === 'new') return 'Add new, stocked';
+    if(action === 'restock') return 'Adds a batch';
+    if(action === 'partial') return 'Add — needs stock';
+    return action;
+  }
+
+  function renderImportPreview(fileName){
+    var checkedCount = pendingImportRows.filter(function(r){ return r.checked; }).length;
+    var rowsHtml = pendingImportRows.map(function(row, i){
+      var p = row.parsed;
+      if(!p){
+        return '<tr><td><input type="checkbox" disabled></td><td colspan="5" style="color:var(--ink-faint);">Row '+(i+2)+' — no medicine name found, will be skipped</td></tr>';
+      }
+      return '<tr>'+
+        '<td><input type="checkbox" class="preview-check" data-idx="'+i+'" '+(row.checked?'checked':'')+'></td>'+
+        '<td>'+escapeHtml(p.name)+'</td>'+
+        '<td>'+escapeHtml(p.unit||'—')+'</td>'+
+        '<td>'+(p.qty!==null?p.qty:'—')+'</td>'+
+        '<td>'+(p.expiry?formatExpiry(p.expiry):'—')+'</td>'+
+        '<td><span class="preview-action '+row.action+'">'+actionLabel(row.action)+'</span></td>'+
+      '</tr>';
+    }).join('');
+
+    var modal = document.getElementById('importPreviewModal');
+    modal.innerHTML =
+      '<div class="modal-overlay"><div class="modal-card">'+
+        '<div class="modal-head"><h3>Review import — '+escapeHtml(fileName)+'</h3>'+
+          '<button class="icon-btn" id="previewCloseBtn" type="button">'+icon('xCircle',16)+'</button></div>'+
+        '<div class="modal-body"><table class="preview-table">'+
+          '<thead><tr><th></th><th>Medicine</th><th>Unit</th><th>Qty</th><th>Expiry</th><th>Will do</th></tr></thead>'+
+          '<tbody>'+rowsHtml+'</tbody>'+
+        '</table></div>'+
+        '<div class="modal-foot">'+
+          '<button class="btn" id="previewCancelBtn" type="button">Cancel</button>'+
+          '<button class="btn primary" id="previewConfirmBtn" type="button">Import '+checkedCount+' medicine(s)</button>'+
+        '</div>'+
+      '</div></div>';
+    modal.style.display = 'block';
+
+    modal.querySelectorAll('.preview-check').forEach(function(cb){
+      cb.addEventListener('change', function(){
+        pendingImportRows[Number(cb.getAttribute('data-idx'))].checked = cb.checked;
+        renderImportPreview(fileName);
+      });
+    });
+    document.getElementById('previewCloseBtn').addEventListener('click', closeImportPreview);
+    document.getElementById('previewCancelBtn').addEventListener('click', closeImportPreview);
+    document.getElementById('previewConfirmBtn').addEventListener('click', commitImport);
+  }
+
+  function closeImportPreview(){
+    pendingImportRows = null;
+    var modal = document.getElementById('importPreviewModal');
+    modal.style.display = 'none';
+    modal.innerHTML = '';
+  }
+
+  function commitImport(){
+    var added=0, addedPartial=0, batchesAdded=0, filledIn=0;
+    pendingImportRows.forEach(function(row){
+      if(!row.checked || !row.parsed) return;
+      var parsed = row.parsed;
+      var existing = state.medicines.find(function(m){ return m.name.toLowerCase() === parsed.name.toLowerCase(); });
+      var hasQty = parsed.qty !== null && parsed.qty > 0;
+      if(existing){
+        var filledSomething = false;
+        if(hasQty){
+          existing.batches.push({id: uid(), qty: parsed.qty, expiry: parsed.expiry, addedDate: todayStr()});
+          batchesAdded++;
+        }
+        if(!existing.unit && parsed.unit){ existing.unit = parsed.unit; filledSomething = true; }
+        if((existing.reorder===null || existing.reorder===undefined) && parsed.reorder!==null){ existing.reorder = parsed.reorder; filledSomething = true; }
+        if(filledSomething) filledIn++;
+      }else{
+        state.medicines.push({
+          id: uid(), name: parsed.name, unit: parsed.unit,
+          reorder: parsed.reorder,
+          batches: hasQty ? [{id: uid(), qty: parsed.qty, expiry: parsed.expiry, addedDate: todayStr()}] : []
+        });
+        if(hasQty) added++; else addedPartial++;
+      }
+    });
+    persist(); renderStock(); renderMonthly(); renderDashboard(); renderToday();
+    closeImportPreview();
+
+    var lines = [];
+    if(added) lines.push(added+' new medicine(s) added, fully stocked');
+    if(addedPartial) lines.push(addedPartial+' new medicine(s) added — marked "Needs stock" until a quantity is entered');
+    if(batchesAdded) lines.push(batchesAdded+' new batch(es) added to medicines that already existed');
+    if(filledIn) lines.push(filledIn+' existing medicine(s) had a missing unit or reorder level filled in');
+    alert('Import complete.\n\n'+(lines.length ? lines.join('\n') : 'Nothing was imported.'));
+  }
+
+  function renderStock(){
+    var panel = document.getElementById('panel-stock');
+    var q = state.stockSearch.toLowerCase();
+    var visible = state.medicines
+      .map(function(med, i){ return {med:med, idx:i}; })
+      .filter(function(x){
+        if(q && x.med.name.toLowerCase().indexOf(q) === -1) return false;
+        var st = statusFor(x.med);
+        var nearest = allocatedBatches(x.med).filter(function(b){ return b.remaining>0 && b.expiry; })
+          .sort(function(a,b){ return daysUntil(a.expiry)-daysUntil(b.expiry); })[0];
+        var isExpiringSoon = nearest && daysUntil(nearest.expiry) <= EXPIRY_SOON_DAYS;
+        if(state.stockFilter==='low' && st!=='low') return false;
+        if(state.stockFilter==='empty' && st!=='empty') return false;
+        if(state.stockFilter==='unset' && st!=='unset') return false;
+        if(state.stockFilter==='expiring' && !isExpiringSoon) return false;
+        return true;
+      });
+
+    var cards = visible.map(function(x){
+      var med = x.med, i = x.idx;
+      var rem = remainingTotal(med);
+      var used = usedFor(med.id);
+      var st = statusFor(med);
+      var col = colorFor(i);
+      var badgeIcon = st === 'ok' ? 'checkCircle' : st === 'low' ? 'alertTriangle' : st === 'unset' ? 'edit' : 'xCircle';
+      var badgeText = st === 'ok' ? 'In stock' : st === 'low' ? 'Running low' : st === 'unset' ? 'Needs stock' : 'Empty';
+      var batches = allocatedBatches(med);
+      var isOpen = !!state.openBatches[med.id];
+      var batchRows = batches.map(function(b){
+        var d = b.expiry ? daysUntil(b.expiry) : null;
+        var lvl = d===null ? '' : (d<0?'danger':(d<=EXPIRY_SOON_DAYS?'warn':''));
+        var expText = b.expiry ? (formatExpiry(b.expiry) + (d!==null ? (d<0? ' · expired' : ' · '+d+'d left') : '')) : 'no expiry set';
+        return '<div class="batch-row" data-batch="'+b.id+'">'+
+          '<span class="bqty">'+b.remaining+'/'+b.qty+'</span>'+
+          '<span class="bexp'+(lvl?' pill '+lvl:'')+'" style="'+(lvl?'':'')+'">'+escapeHtml(expText)+'</span>'+
+          '<button class="icon-btn bdel" type="button" aria-label="Delete batch" style="width:22px;height:22px;">'+icon('trash',13)+'</button>'+
+        '</div>';
+      }).join('');
+      var nearest = batches.filter(function(b){return b.remaining>0 && b.expiry;}).sort(function(a,b){return daysUntil(a.expiry)-daysUntil(b.expiry);})[0];
+      var nearestBadge = '';
+      if(nearest){
+        var d2 = daysUntil(nearest.expiry);
+        if(d2 <= EXPIRY_SOON_DAYS){
+          nearestBadge = '<span class="badge '+(d2<0?'empty':'low')+'">'+(d2<0? 'Expired':'Expires '+d2+'d')+'</span>';
+        }
+      }
+      return (
+        '<div class="med-card" data-med="'+med.id+'">'+
+          '<div class="cap" style="background:'+col.fill+'"></div>'+
+          '<div class="body">'+
+            '<p class="name">'+escapeHtml(med.name)+'</p>'+
+            '<p class="unit">'+escapeHtml(med.unit||'unit')+'</p>'+
+            '<div class="stat-line"><span>Total stocked</span><b>'+totalQty(med)+'</b></div>'+
+            '<div class="stat-line"><span>Used so far</span><b>'+round(used)+'</b></div>'+
+            '<div class="stat-line"><span>Remaining</span><b>'+rem+'</b></div>'+
+            '<span class="badge '+st+'">'+icon(badgeIcon,11)+badgeText+'</span>'+nearestBadge+
+            '<button class="batch-toggle" type="button">'+(isOpen?'Hide batches ▲':'Show batches ('+batches.length+') ▼')+'</button>'+
+            (isOpen ? '<div class="batch-list">'+batchRows+'</div>' : '')+
+            '<div class="restock-row">'+
+              '<input type="number" min="0" step="1" class="restock-qty" placeholder="qty">'+
+              '<input type="month" class="restock-expiry" placeholder="Expiry">'+
+              '<button class="btn small restock-btn">'+icon('plus',13)+'Add batch</button>'+
+            '</div>'+
+            '<div class="actions">'+
+              '<button class="btn small edit-btn">'+icon('edit',13)+'Edit</button>'+
+              '<button class="btn small danger delete-btn">'+icon('trash',13)+'Delete</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>'
+      );
+    }).join('');
+
+    panel.innerHTML =
+      '<div class="content-head"><h2>Stock</h2><div class="desc">Track quantity and expiry, batch by batch</div></div>'+
+      '<div class="card">'+
+        '<span class="field-label">Add a medicine</span>'+
+        '<div class="add-form">'+
+          '<div><span class="field-label">Name</span><input type="text" id="newName" placeholder="e.g. Paracetamol"></div>'+
+          '<div><span class="field-label">Unit</span><input type="text" id="newUnit" placeholder="tablets, ml…" style="width:120px;"></div>'+
+          '<div><span class="field-label">Starting stock</span><input type="number" id="newTotal" min="0" step="1" placeholder="0"></div>'+
+          '<div><span class="field-label">Expiry (month &amp; year)</span><input type="month" id="newExpiry"></div>'+
+          '<div><span class="field-label">Low stock alert at</span><input type="number" id="newReorder" min="0" step="1" placeholder="optional"></div>'+
+          '<button class="btn primary" id="addMedBtn">'+icon('plus',14)+'Add medicine</button>'+
+        '</div>'+
+        '<div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
+          '<button class="btn" id="importExcelBtn">'+icon('upload',14)+'Import from Excel</button>'+
+          '<button class="btn" id="downloadTemplateBtn">'+icon('download',14)+'Download template</button>'+
+          '<input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none;">'+
+          '<span style="font-size:12px;color:var(--ink-faint);">Columns: Name, Unit, Quantity, Expiry (month/year), Reorder level — missing columns are fine</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="filter-bar">'+
+        '<span class="search-wrap">'+icon('search',14)+'<input type="text" id="stockSearch" placeholder="Search medicines…" value="'+escapeHtml(state.stockSearch)+'"></span>'+
+        '<button class="pill-btn'+(state.stockFilter==='all'?' active':'')+'" data-filter="all">All</button>'+
+        '<button class="pill-btn'+(state.stockFilter==='low'?' active':'')+'" data-filter="low">Low</button>'+
+        '<button class="pill-btn'+(state.stockFilter==='empty'?' active':'')+'" data-filter="empty">Empty</button>'+
+        '<button class="pill-btn'+(state.stockFilter==='unset'?' active':'')+'" data-filter="unset">Needs stock'+(needsSetupList().length ? ' ('+needsSetupList().length+')' : '')+'</button>'+
+        '<button class="pill-btn'+(state.stockFilter==='expiring'?' active':'')+'" data-filter="expiring">Expiring soon</button>'+
+      '</div>'+
+      '<div class="stock-grid">'+(cards || '<div class="empty-state" style="grid-column:1/-1;">'+icon('search',30)+'<div class="t">Nothing matches</div><div class="s">Try a different filter or add a medicine above.</div></div>')+'</div>';
+
+    document.getElementById('addMedBtn').addEventListener('click', function(){
+      var name = document.getElementById('newName').value.trim();
+      var unit = document.getElementById('newUnit').value.trim();
+      var totalRaw = document.getElementById('newTotal').value;
+      var expiry = document.getElementById('newExpiry').value || null;
+      var reorderRaw = document.getElementById('newReorder').value;
+      if(!name){ document.getElementById('newName').focus(); return; }
+      var hasQty = totalRaw !== '' && Number(totalRaw) > 0;
+      state.medicines.push({
+        id: uid(), name: name, unit: unit,
+        reorder: reorderRaw === '' ? null : Number(reorderRaw),
+        batches: hasQty ? [{id: uid(), qty: Number(totalRaw), expiry: expiry, addedDate: todayStr()}] : []
+      });
+      persist(); renderStock(); renderMonthly(); renderDashboard(); renderToday();
+    });
+    document.getElementById('stockSearch').addEventListener('input', function(e){
+      state.stockSearch = e.target.value; renderStock();
+    });
+
+    document.getElementById('downloadTemplateBtn').addEventListener('click', function(){
+      var ws = XLSX.utils.aoa_to_sheet([
+        ['Name','Unit','Quantity','Expiry','Reorder level'],
+        ['Paracetamol 500mg','tablets',300,'01/2027',50],
+        ['Amoxicillin 250mg','capsules',150,'11/2026','']
+      ]);
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Medicines');
+      XLSX.writeFile(wb, 'medicine-ledger-import-template.xlsx');
+    });
+
+    document.getElementById('importExcelBtn').addEventListener('click', function(){
+      document.getElementById('excelFileInput').click();
+    });
+    document.getElementById('excelFileInput').addEventListener('change', function(e){
+      var file = e.target.files[0];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(evt){
+        try{
+          var wb = XLSX.read(evt.target.result, {type:'array', cellDates:true});
+          var sheet = wb.Sheets[wb.SheetNames[0]];
+          var rawRows = XLSX.utils.sheet_to_json(sheet, {defval:''});
+          openImportPreview(rawRows, file.name);
+        }catch(err){
+          alert('Could not read that file. Make sure it\'s an Excel (.xlsx) or CSV file with at least a Name column.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+      e.target.value = '';
+    });
+
+    panel.querySelectorAll('.pill-btn').forEach(function(b){
+      b.addEventListener('click', function(){ state.stockFilter = b.getAttribute('data-filter'); renderStock(); });
+    });
+
+    panel.querySelectorAll('.med-card').forEach(function(cardEl){
+      var medId = cardEl.getAttribute('data-med');
+      var med = state.medicines.find(function(m){ return m.id === medId; });
+
+      var toggleBtn = cardEl.querySelector('.batch-toggle');
+      if(toggleBtn) toggleBtn.addEventListener('click', function(){
+        state.openBatches[medId] = !state.openBatches[medId];
+        renderStock();
+      });
+
+      cardEl.querySelectorAll('.bdel').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var batchId = btn.closest('.batch-row').getAttribute('data-batch');
+          if(confirm('Remove this batch from stock?')){
+            med.batches = med.batches.filter(function(b){ return b.id !== batchId; });
+            persist(); renderStock(); renderDashboard();
+          }
+        });
+      });
+
+      cardEl.querySelector('.restock-btn').addEventListener('click', function(){
+        var qty = Number(cardEl.querySelector('.restock-qty').value) || 0;
+        var expiry = cardEl.querySelector('.restock-expiry').value || null;
+        if(qty > 0){
+          med.batches.push({id: uid(), qty: qty, expiry: expiry, addedDate: todayStr()});
+          persist(); renderStock(); renderDashboard();
+        }
+      });
+
+      cardEl.querySelector('.delete-btn').addEventListener('click', function(){
+        if(confirm('Delete '+med.name+'? This removes it and all logged history.')){
+          state.medicines = state.medicines.filter(function(m){ return m.id !== medId; });
+          for(var d in state.logs){ delete state.logs[d][medId]; }
+          persist(); renderStock(); renderToday(); renderMonthly(); renderDashboard();
+        }
+      });
+
+      cardEl.querySelector('.edit-btn').addEventListener('click', function(){
+        var body = cardEl.querySelector('.body');
+        body.innerHTML =
+          '<div class="edit-form">'+
+            '<div><span class="field-label">Name</span><input type="text" class="e-name" value="'+escapeHtml(med.name)+'"></div>'+
+            '<div class="row2">'+
+              '<div style="flex:1"><span class="field-label">Unit</span><input type="text" class="e-unit" value="'+escapeHtml(med.unit||'')+'"></div>'+
+              '<div style="flex:1"><span class="field-label">Low stock alert at</span><input type="number" class="e-reorder" value="'+(med.reorder===null||med.reorder===undefined?'':med.reorder)+'"></div>'+
+            '</div>'+
+            '<div class="actions"><button class="btn primary small e-save">Save</button><button class="btn small e-cancel">Cancel</button></div>'+
+          '</div>';
+        body.querySelector('.e-save').addEventListener('click', function(){
+          med.name = body.querySelector('.e-name').value.trim() || med.name;
+          med.unit = body.querySelector('.e-unit').value.trim();
+          var ro = body.querySelector('.e-reorder').value;
+          med.reorder = ro === '' ? null : Number(ro);
+          persist(); renderStock(); renderToday(); renderMonthly(); renderDashboard();
+        });
+        body.querySelector('.e-cancel').addEventListener('click', renderStock);
+      });
+    });
+  }
+
+  // ---------- MONTHLY ----------
+
+  function renderMonthly(){
+    var panel = document.getElementById('panel-monthly');
+    if(state.medicines.length === 0){
+      panel.innerHTML = '<div class="content-head"><h2>Monthly sheet</h2></div><div class="card"><div class="empty-state">'+icon('grid',30)+'<div class="t">Nothing to show yet</div><div class="s">Add medicines in the Stock tab to see the monthly sheet.</div></div></div>';
+      return;
+    }
+    var ym = state.month;
+    var parts = ym.split('-');
+    var y = Number(parts[0]), m = Number(parts[1]);
+    var nDays = daysInMonth(ym);
+    var bounds = monthBounds(ym);
+
+    var headCells = state.medicines.map(function(med){
+      return '<th>'+escapeHtml(med.name)+'<br><span style="font-weight:400;text-transform:none;">'+escapeHtml(med.unit||'')+'</span></th>';
+    }).join('');
+
+    var bodyRows = '';
+    var colTotals = state.medicines.map(function(){ return 0; });
+    for(var day=1; day<=nDays; day++){
+      var dd = String(day).padStart(2,'0');
+      var mm = String(m).padStart(2,'0');
+      var dateKey = y+'-'+mm+'-'+dd;
+      var wknd = isWeekend(y,m,day);
+      var rowTotal = 0;
+      var cells = state.medicines.map(function(med, idx){
+        var val = dayTotal(dateKey, med.id);
+        rowTotal += val; colTotals[idx] += val;
+        return '<td class="sheet-cell '+(wknd?'weekend':'')+'" data-date="'+dateKey+'" title="Click to open this day in Today">'+(val||'')+'</td>';
+      }).join('');
+      bodyRows += '<tr><td class="'+(wknd?'weekend':'')+'">'+dd+' '+weekdayShort(y,m,day)+'</td>'+cells+'<td class="day-total-col '+(wknd?'weekend':'')+'">'+(rowTotal||'')+'</td></tr>';
+    }
+
+    var grandTotal = colTotals.reduce(function(a,b){ return a+b; }, 0);
+    var footCells = colTotals.map(function(t){ return '<td>'+round(t)+'</td>'; }).join('');
+
+    var openCells = state.medicines.map(function(med){ return '<td>'+round(stockAddedBefore(med, bounds.start) - usedBefore(med.id, bounds.start))+'</td>'; }).join('');
+    var addedCells = state.medicines.map(function(med){ return '<td>'+round(stockAddedBetween(med, bounds.start, bounds.end))+'</td>'; }).join('');
+    var closeCells = state.medicines.map(function(med, idx){
+      var opening = stockAddedBefore(med, bounds.start) - usedBefore(med.id, bounds.start);
+      var added = stockAddedBetween(med, bounds.start, bounds.end);
+      return '<td>'+round(opening + added - colTotals[idx])+'</td>';
+    }).join('');
+
+    panel.innerHTML =
+      '<div class="content-head"><h2>Monthly sheet</h2><div class="desc">Opening stock carries over automatically from the previous month — click a day to edit it in Today</div></div>'+
+      '<div class="card" style="margin-bottom:14px;">'+
+        '<div class="month-head"><span class="field-label" style="margin:0;">Opening / added / used / closing — this month</span></div>'+
+        '<div class="sheet-scroll"><table class="sheet">'+
+          '<thead><tr><th>Metric</th>'+headCells+'</tr></thead>'+
+          '<tbody>'+
+            '<tr><td>Opening stock</td>'+openCells+'</tr>'+
+            '<tr><td>Added this month</td>'+addedCells+'</tr>'+
+            '<tr><td>Used this month</td>'+footCells+'</tr>'+
+            '<tr><td>Closing stock</td>'+closeCells+'</tr>'+
+          '</tbody>'+
+        '</table></div>'+
+      '</div>'+
+      '<div class="card">'+
+        '<div class="month-head">'+
+          '<div><span class="field-label">Month</span><input type="month" id="monthInput" value="'+ym+'"></div>'+
+          '<div class="row">'+
+            '<button class="btn" id="printBtn">'+icon('print',14)+'Print</button>'+
+            '<button class="btn" id="exportCsvBtn">'+icon('download',14)+'Export sheet CSV</button>'+
+            '<button class="btn" id="exportLogBtn">'+icon('download',14)+'Export usage log (OP cards)</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="sheet-scroll"><table class="sheet">'+
+          '<thead><tr><th>Date</th>'+headCells+'<th>Day total</th></tr></thead>'+
+          '<tbody>'+bodyRows+'</tbody>'+
+          '<tfoot><tr><td>Total</td>'+footCells+'<td>'+round(grandTotal)+'</td></tr></tfoot>'+
+        '</table></div>'+
+      '</div>';
+
+    document.getElementById('monthInput').addEventListener('change', function(e){ state.month = e.target.value || state.month; renderMonthly(); });
+    document.getElementById('exportCsvBtn').addEventListener('click', function(){ exportCsv(ym); });
+    document.getElementById('exportLogBtn').addEventListener('click', function(){ exportUsageLog(ym); });
+    document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
+
+    panel.querySelectorAll('.sheet-cell').forEach(function(td){
+      td.addEventListener('click', function(){
+        state.todayDate = td.getAttribute('data-date');
+        switchTab('today');
+      });
+    });
+  }
+
+  function exportCsv(ym){
+    var parts = ym.split('-');
+    var y = Number(parts[0]), m = Number(parts[1]);
+    var nDays = daysInMonth(ym);
+    var header = ['Date'].concat(state.medicines.map(function(med){ return med.name + (med.unit ? ' ('+med.unit+')' : ''); })).concat(['Day total']);
+    var lines = [header.join(',')];
+    var colTotals = state.medicines.map(function(){ return 0; });
+    for(var day=1; day<=nDays; day++){
+      var dd = String(day).padStart(2,'0');
+      var mm = String(m).padStart(2,'0');
+      var dateKey = y+'-'+mm+'-'+dd;
+      var rowTotal = 0;
+      var row = [dateKey];
+      state.medicines.forEach(function(med, idx){
+        var val = dayTotal(dateKey, med.id);
+        rowTotal += val; colTotals[idx] += val;
+        row.push(val || '');
+      });
+      row.push(rowTotal || '');
+      lines.push(row.join(','));
+    }
+    var totalRow = ['Total'].concat(colTotals.map(function(t){return round(t);})).concat([round(colTotals.reduce(function(a,b){return a+b;},0))]);
+    lines.push(totalRow.join(','));
+    downloadCsv(lines.join('\n'), 'medicine-ledger-'+ym+'.csv');
+  }
+
+  // Excel aggressively guesses "1/1"-style text as a date when it opens a file.
+  // Forcing the cell type to text (and format code '@') stops that guess dead,
+  // regardless of what the OP card number happens to look like.
+  function forceTextColumn(ws, colIndex, rowCount){
+    for(var r=0; r<rowCount; r++){
+      var ref = XLSX.utils.encode_cell({r:r, c:colIndex});
+      var cell = ws[ref];
+      if(cell){
+        cell.t = 's';
+        cell.z = '@';
+        if(cell.v !== undefined) cell.v = String(cell.v);
+      }
+    }
+  }
+
+  function exportUsageLog(ym){
+    var rows = [['Date','Medicine','Unit','Quantity','OP Card Number']];
+    var dates = Object.keys(state.logs).filter(function(d){ return d.slice(0,7) === ym; }).sort();
+    dates.forEach(function(d){
+      state.medicines.forEach(function(med){
+        dayEntries(d, med.id).forEach(function(en){
+          if(Number(en.qty) > 0){
+            rows.push([d, med.name, med.unit||'', en.qty, en.op||'']);
+          }
+        });
+      });
+    });
+    if(rows.length === 1){
+      rows.push(['No doses logged this month yet.', '', '', '', '']);
+    }
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch:12},{wch:24},{wch:12},{wch:10},{wch:18}];
+    forceTextColumn(ws, 4, rows.length); // OP Card Number column — protect "1/1" style values
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Usage log');
+    XLSX.writeFile(wb, 'medicine-usage-log-'+ym+'.xlsx');
+  }
+
+  function exportTodayExcel(dateVal){
+    var rows = [['Date','Medicine','Unit','Quantity','OP Card Number']];
+    state.medicines.forEach(function(med){
+      dayEntries(dateVal, med.id).forEach(function(en){
+        if(Number(en.qty) > 0){
+          rows.push([dateVal, med.name, med.unit||'', en.qty, en.op||'']);
+        }
+      });
+    });
+    if(rows.length === 1){
+      rows.push(['No doses logged for this date yet.', '', '', '', '']);
+    }
+    var ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{wch:12},{wch:24},{wch:12},{wch:10},{wch:18}];
+    forceTextColumn(ws, 4, rows.length); // OP Card Number column — protect "1/1" style values
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, dateVal);
+    XLSX.writeFile(wb, 'medicine-ledger-'+dateVal+'.xlsx');
+  }
+
+  function csvSafe(v){
+    v = String(v);
+    return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+  }
+  function downloadCsv(csv, filename){
+    var blob = new Blob([csv], {type:'text/csv'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function renderAll(){
+    renderDashboard(); renderToday(); renderStock(); renderMonthly();
+  }
+  function switchTab(tab){
+    state.tab = tab;
+    document.querySelectorAll('.nav-item').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')===tab); });
+    document.querySelectorAll('section.panel').forEach(function(p){ p.classList.toggle('active', p.id === 'panel-'+tab); });
+  }
+  document.querySelectorAll('.nav-item').forEach(function(b){
+    b.addEventListener('click', function(){ switchTab(b.getAttribute('data-tab')); });
+  });
+
+  document.getElementById('backupExportBtn').innerHTML = icon('download',14)+'Export backup';
+  document.getElementById('backupImportBtn').innerHTML = icon('upload',14)+'Import backup';
+
+  document.getElementById('backupExportBtn').addEventListener('click', function(){
+    var payload = JSON.stringify({medicines: state.medicines, logs: state.logs}, null, 2);
+    var blob = new Blob([payload], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'medicine-ledger-backup-'+todayStr()+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setLastBackupTs(Date.now());
+    updateFooterMeta();
+    renderDashboard();
+  });
+  document.getElementById('backupImportBtn').addEventListener('click', function(){
+    document.getElementById('backupFileInput').click();
+  });
+  document.getElementById('backupFileInput').addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var data = JSON.parse(reader.result);
+        if(!confirm('Import this backup? It will replace all current data.')) return;
+        state.medicines = data.medicines || [];
+        state.logs = data.logs || {};
+        state.medicines.forEach(function(med){
+          if(!med.batches){ med.batches = [{id: uid(), qty: med.total || 0, expiry: med.expiry || null, addedDate: todayStr()}]; }
+        });
+        persist();
+        renderAll();
+      }catch(err){
+        alert('Could not read that file — make sure it\'s a backup exported from this app.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // ---------- PUSH NOTIFICATIONS ----------
+
+  function urlBase64ToUint8Array(base64String){
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    var rawData = atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+    for (var i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
+  }
+
+  var notifySupported = ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
+  var swRegistration = null;
+
+  async function updateNotifyUI(){
+    var btn = document.getElementById('notifyBtn');
+    if(!notifySupported){
+      btn.innerHTML = icon('bell',14)+'Notifications not supported here';
+      btn.disabled = true;
+      return;
+    }
+    if(Notification.permission === 'denied'){
+      btn.innerHTML = icon('bell',14)+'Notifications blocked in browser settings';
+      btn.disabled = true;
+      return;
+    }
+    btn.disabled = false;
+    var sub = swRegistration ? await swRegistration.pushManager.getSubscription() : null;
+    if(sub){
+      btn.innerHTML = icon('bell',14)+'Send test notification';
+      btn.onclick = sendTestNotification;
+    }else{
+      btn.innerHTML = icon('bell',14)+'Enable notifications';
+      btn.onclick = enableNotifications;
+    }
+  }
+
+  async function enableNotifications(){
+    var btn = document.getElementById('notifyBtn');
+    btn.disabled = true;
+    try{
+      var permission = await Notification.requestPermission();
+      if(permission !== 'granted'){ await updateNotifyUI(); return; }
+
+      var keyRes = await api('/api/push/vapid-public-key', 'GET');
+      var sub = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(keyRes.publicKey)
+      });
+      await api('/api/push/subscribe', 'POST', { subscription: sub.toJSON() });
+      await updateNotifyUI();
+    }catch(err){
+      alert('Could not enable notifications: '+(err.message||err));
+    }
+    btn.disabled = false;
+  }
+
+  async function sendTestNotification(){
+    var btn = document.getElementById('notifyBtn');
+    var original = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = icon('bell',14)+'Sending…';
+    try{
+      await api('/api/push/test', 'POST');
+    }catch(err){
+      alert('Could not send test notification: '+(err.message||err));
+    }
+    btn.disabled = false; btn.innerHTML = original;
+  }
+
+  if(notifySupported){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      swRegistration = reg;
+      updateNotifyUI();
+    }).catch(function(){ notifySupported = false; updateNotifyUI(); });
+  }else{
+    updateNotifyUI();
+  }
+
+  // ---------- AUTH ----------
+
+  function showAuthError(msg){
+    var el = document.getElementById('authError');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+  function clearAuthError(){
+    document.getElementById('authError').classList.remove('show');
+  }
+
+  document.querySelectorAll('.auth-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.auth-tab').forEach(function(t){ t.classList.toggle('active', t===tab); });
+      var mode = tab.getAttribute('data-mode');
+      document.querySelectorAll('.auth-form').forEach(function(f){ f.classList.remove('active'); });
+      document.getElementById(mode+'Form').classList.add('active');
+      clearAuthError();
+    });
+  });
+
+  async function bootApp(){
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('appShell').style.display = 'flex';
+    document.getElementById('profileLine').innerHTML =
+      '<b>'+escapeHtml(session.user.username)+'</b> · '+escapeHtml(session.user.hospitalName);
+    await loadState();
+    renderAll();
+    updateFooterMeta();
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    clearAuthError();
+    var identifier = document.getElementById('loginIdentifier').value.trim();
+    var password = document.getElementById('loginPassword').value;
+    if(!identifier || !password) return;
+    var btn = e.target.querySelector('button');
+    btn.disabled = true;
+    try{
+      var res = await api('/api/login', 'POST', { identifier: identifier, password: password });
+      setToken(res.token);
+      session = { user: res.user };
+      await bootApp();
+    }catch(err){
+      showAuthError(err.message || 'Could not log in — check your username/email and password.');
+    }
+    btn.disabled = false;
+  });
+
+  document.getElementById('createForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    clearAuthError();
+    var hospitalName = document.getElementById('createHospital').value.trim();
+    var username = document.getElementById('createUsername').value.trim();
+    var email = document.getElementById('createEmail').value.trim();
+    var password = document.getElementById('createPassword').value;
+    if(!hospitalName || !username || !email || !password) return;
+    if(password.length < 6){ showAuthError('Password should be at least 6 characters.'); return; }
+    var btn = e.target.querySelector('button');
+    var originalLabel = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Creating account…';
+    try{
+      var res = await api('/api/signup', 'POST', {
+        hospitalName: hospitalName, username: username, email: email, password: password
+      });
+      setToken(res.token);
+      session = { user: res.user };
+      await bootApp();
+    }catch(err){
+      showAuthError(err.message || 'Could not create the account — please try again.');
+    }
+    btn.disabled = false; btn.textContent = originalLabel;
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    setToken(null);
+    session = null;
+    document.getElementById('appShell').style.display = 'none';
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('loginIdentifier').value = '';
+    document.getElementById('loginPassword').value = '';
+  });
+
+  // On load, resume an existing session if a token is stored on this device —
+  // this is what keeps someone logged in even after closing the app from
+  // recent apps. The token lives in localStorage and is valid for 30 days;
+  // logging out (or clearing site data) is the only thing that clears it.
+  (async function initAuth(){
+    if(!getToken()) return;
+    try{
+      var res = await api('/api/me', 'GET');
+      session = { user: res.user };
+      await bootApp();
+    }catch(e){
+      setToken(null); // stored token was invalid/expired — show login screen as-is
+    }
+  })();
+})();
+</script>
+</body>
+</html>
