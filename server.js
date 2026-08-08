@@ -39,7 +39,7 @@ let pool = null;
 if (process.env.DATABASE_URL) {
   try {
     const { Pool } = require('pg');
-    pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+    pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: true } });
   } catch (e) {
     console.error('[medicine-ledger] Could not set up cloud backup, continuing with local file only:', e.message);
   }
