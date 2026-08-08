@@ -1,0 +1,92 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.medledger.app"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:4:5-67
+11-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:5:5-79
+12-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:5:22-76
+13
+14    <permission
+14-->[androidx.core:core:1.9.0] C:\Users\Ashvin\.gradle\caches\transforms-3\8222cb7143ba57e62d848e6565915cfd\transformed\core-1.9.0\AndroidManifest.xml:22:5-24:47
+15        android:name="com.medledger.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+15-->[androidx.core:core:1.9.0] C:\Users\Ashvin\.gradle\caches\transforms-3\8222cb7143ba57e62d848e6565915cfd\transformed\core-1.9.0\AndroidManifest.xml:23:9-81
+16        android:protectionLevel="signature" />
+16-->[androidx.core:core:1.9.0] C:\Users\Ashvin\.gradle\caches\transforms-3\8222cb7143ba57e62d848e6565915cfd\transformed\core-1.9.0\AndroidManifest.xml:24:9-44
+17
+18    <uses-permission android:name="com.medledger.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+18-->[androidx.core:core:1.9.0] C:\Users\Ashvin\.gradle\caches\transforms-3\8222cb7143ba57e62d848e6565915cfd\transformed\core-1.9.0\AndroidManifest.xml:26:5-97
+18-->[androidx.core:core:1.9.0] C:\Users\Ashvin\.gradle\caches\transforms-3\8222cb7143ba57e62d848e6565915cfd\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
+19
+20    <application
+20-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:7:5-25:19
+21        android:allowBackup="true"
+21-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:8:9-35
+22        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+22-->[androidx.core:core:1.9.0] C:\Users\Ashvin\.gradle\caches\transforms-3\8222cb7143ba57e62d848e6565915cfd\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
+23        android:debuggable="true"
+24        android:extractNativeLibs="false"
+25        android:icon="@mipmap/ic_launcher"
+25-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:9:9-43
+26        android:label="@string/app_name"
+26-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:11:9-41
+27        android:roundIcon="@mipmap/ic_launcher_round"
+27-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:10:9-54
+28        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+28-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:13:9-65
+29        android:usesCleartextTraffic="false" >
+29-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:12:9-45
+30        <activity
+30-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:15:9-24:20
+31            android:name="com.medledger.app.MainActivity"
+31-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:16:13-41
+32            android:configChanges="orientation|screenSize|keyboardHidden"
+32-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:19:13-74
+33            android:exported="true"
+33-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:17:13-36
+34            android:label="@string/app_name" >
+34-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:18:13-45
+35            <intent-filter>
+35-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:20:13-23:29
+36                <action android:name="android.intent.action.MAIN" />
+36-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:21:17-69
+36-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:21:25-66
+37
+38                <category android:name="android.intent.category.LAUNCHER" />
+38-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:22:17-77
+38-->C:\Users\Ashvin\Downloads\medicine-ledger-app\medledger-app\android\app\src\main\AndroidManifest.xml:22:27-74
+39            </intent-filter>
+40        </activity>
+41
+42        <provider
+42-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Ashvin\.gradle\caches\transforms-3\7e018ad17737e3bbff7428485e891d69\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+43            android:name="androidx.startup.InitializationProvider"
+43-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Ashvin\.gradle\caches\transforms-3\7e018ad17737e3bbff7428485e891d69\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:25:13-67
+44            android:authorities="com.medledger.app.androidx-startup"
+44-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Ashvin\.gradle\caches\transforms-3\7e018ad17737e3bbff7428485e891d69\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:26:13-68
+45            android:exported="false" >
+45-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Ashvin\.gradle\caches\transforms-3\7e018ad17737e3bbff7428485e891d69\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:27:13-37
+46            <meta-data
+46-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Ashvin\.gradle\caches\transforms-3\7e018ad17737e3bbff7428485e891d69\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+47                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+47-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Ashvin\.gradle\caches\transforms-3\7e018ad17737e3bbff7428485e891d69\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:30:17-75
+48                android:value="androidx.startup" />
+48-->[androidx.emoji2:emoji2:1.2.0] C:\Users\Ashvin\.gradle\caches\transforms-3\7e018ad17737e3bbff7428485e891d69\transformed\jetified-emoji2-1.2.0\AndroidManifest.xml:31:17-49
+49            <meta-data
+49-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\Ashvin\.gradle\caches\transforms-3\c91847f6f59d8b4294542c11a42ead75\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
+50                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+50-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\Ashvin\.gradle\caches\transforms-3\c91847f6f59d8b4294542c11a42ead75\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
+51                android:value="androidx.startup" />
+51-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\Ashvin\.gradle\caches\transforms-3\c91847f6f59d8b4294542c11a42ead75\transformed\jetified-lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
+52        </provider>
+53    </application>
+54
+55</manifest>

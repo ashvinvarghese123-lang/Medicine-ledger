@@ -11,7 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 class MainActivity : AppCompatActivity() {
 
     // ↓↓↓ REQUIRED: replace this with your deployed app URL (e.g. your Render link) ↓↓↓
-    private val appUrl = "https://your-app.onrender.com"
+    private val appUrl = "https://medicine-ledger-frontend.vercel.app/"
 
     private lateinit var webView: WebView
     private lateinit var swipeRefresh: SwipeRefreshLayout

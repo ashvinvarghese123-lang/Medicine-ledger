@@ -1,6 +1,7 @@
 // Medicine Ledger — backend
-// Zero external dependencies — everything here uses only Node's built-in
-// modules (http, crypto, fs). No `npm install` required: just `node server.js`.
+// Uses only Node's built-in modules for the app itself. The one optional
+// dependency is `pg`, used only if DATABASE_URL is set — see the cloud
+// backup section below for why.
 
 const http = require('http');
 const crypto = require('crypto');
@@ -28,12 +29,59 @@ const JWT_SECRET = process.env.JWT_SECRET || (function () {
 const TOKEN_LIFETIME_SECONDS = 60 * 60 * 24 * 30; // 30 days — "stay logged in"
 
 // ---------------------------------------------------------------------
-// Push notifications (Web Push / VAPID). Keys are generated once and
-// saved to vapid.json so they stay the same across restarts — if they
-// changed, every device that already subscribed would need to resubscribe.
+// Cloud backup (optional). Render's free tier has an EPHEMERAL disk —
+// data.json and vapid.json can be wiped on redeploy or restart. If
+// DATABASE_URL is set, every write is also mirrored to Postgres, and on
+// boot we restore the latest copy from there before accepting requests.
+// With no DATABASE_URL set, behavior is 100% unchanged (local file only).
+// ---------------------------------------------------------------------
+let pool = null;
+if (process.env.DATABASE_URL) {
+  try {
+    const { Pool } = require('pg');
+    pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+  } catch (e) {
+    console.error('[medicine-ledger] Could not set up cloud backup, continuing with local file only:', e.message);
+  }
+}
+async function ensureCloudTable() {
+  if (!pool) return;
+  await pool.query('CREATE TABLE IF NOT EXISTS app_state (id smallint PRIMARY KEY, data jsonb NOT NULL, updated_at timestamptz DEFAULT now())');
+}
+function persistToCloud(db) {
+  if (!pool) return Promise.resolve();
+  return pool.query(
+    'INSERT INTO app_state (id, data, updated_at) VALUES (1, $1, now()) ON CONFLICT (id) DO UPDATE SET data = $1, updated_at = now()',
+    [JSON.stringify(db)]
+  ).catch(function (e) { console.error('[medicine-ledger] Cloud backup write failed:', e.message); });
+}
+async function hydrateFromCloud() {
+  if (!pool) return;
+  try {
+    const { rows } = await pool.query('SELECT data FROM app_state WHERE id = 1');
+    if (rows.length) {
+      var cloudData = typeof rows[0].data === 'string' ? JSON.parse(rows[0].data) : rows[0].data;
+      fs.writeFileSync(DB_FILE, JSON.stringify(cloudData, null, 2));
+      console.log('[medicine-ledger] Restored data from cloud backup.');
+    } else if (fs.existsSync(DB_FILE)) {
+      await persistToCloud(JSON.parse(fs.readFileSync(DB_FILE, 'utf8')));
+      console.log('[medicine-ledger] Seeded cloud backup from local data.json.');
+    }
+  } catch (e) {
+    console.error('[medicine-ledger] Cloud hydration failed, continuing with local file only:', e.message);
+  }
+}
+
+// ---------------------------------------------------------------------
+// Push notifications (Web Push / VAPID). If VAPID_PUBLIC_KEY /
+// VAPID_PRIVATE_KEY env vars are set, those are used and never change —
+// otherwise keys are generated once and saved to vapid.json, which is
+// subject to the same disk-wipe risk described above.
 // ---------------------------------------------------------------------
 let vapidKeys;
-if (fs.existsSync(VAPID_FILE)) {
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  vapidKeys = { publicKey: process.env.VAPID_PUBLIC_KEY, privateKey: process.env.VAPID_PRIVATE_KEY };
+} else if (fs.existsSync(VAPID_FILE)) {
   vapidKeys = JSON.parse(fs.readFileSync(VAPID_FILE, 'utf8'));
 } else {
   vapidKeys = webpush.generateVAPIDKeys();
@@ -63,6 +111,7 @@ function readDB() {
 }
 function writeDB(db) {
   fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  persistToCloud(db); // fire-and-forget — local write already succeeded, this just mirrors it
 }
 if (!fs.existsSync(DB_FILE)) writeDB({ users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {} });
 
@@ -403,9 +452,13 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Medicine Ledger running at http://localhost:${PORT}`);
-  // First check shortly after boot, then on a regular interval.
-  setTimeout(runAlertCheck, 30 * 1000);
-  setInterval(runAlertCheck, CHECK_INTERVAL_MS);
-});
+(async function boot() {
+  await ensureCloudTable();
+  await hydrateFromCloud();
+  server.listen(PORT, () => {
+    console.log(`Medicine Ledger running at http://localhost:${PORT}`);
+    // First check shortly after boot, then on a regular interval.
+    setTimeout(runAlertCheck, 30 * 1000);
+    setInterval(runAlertCheck, CHECK_INTERVAL_MS);
+  });
+})();

@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/layout_activity_main.xml.flat",
+        "source": "com.medledger.app-main-26:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.medledger.app-debug-24:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.medledger.app-main-26:/mipmap-mdpi/ic_launcher.png"
+    }
+]
