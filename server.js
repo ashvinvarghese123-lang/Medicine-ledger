@@ -95,6 +95,45 @@ webpush.setVapidDetails(
 );
 
 // ---------------------------------------------------------------------
+// Password reset emails (optional). If RESEND_API_KEY is set, reset links
+// are emailed via Resend (https://resend.com — free tier, no extra npm
+// package needed since Node 18+ has fetch built in). Without it, the reset
+// link is just logged to the console — handy for local testing, and means
+// this feature never crashes a deployment that hasn't set it up yet.
+// FRONTEND_URL should be your Vercel URL, e.g. https://your-app.vercel.app
+// ---------------------------------------------------------------------
+async function sendPasswordResetEmail(toEmail, resetUrl) {
+  if (!process.env.RESEND_API_KEY) {
+    console.log('[medicine-ledger] RESEND_API_KEY not set — reset link for ' + toEmail + ':\n  ' + resetUrl);
+    return;
+  }
+  try {
+    const resp = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: process.env.RESET_EMAIL_FROM || 'Medicine Ledger <onboarding@resend.dev>',
+        to: toEmail,
+        subject: 'Reset your Medicine Ledger password',
+        html:
+          '<p>Someone requested a password reset for your Medicine Ledger account.</p>' +
+          '<p><a href="' + resetUrl + '">Click here to set a new password</a> (link expires in 30 minutes).</p>' +
+          '<p>If you didn\'t request this, you can safely ignore this email.</p>',
+      }),
+    });
+    if (!resp.ok) {
+      const errText = await resp.text();
+      console.error('[medicine-ledger] Resend API error:', resp.status, errText);
+    }
+  } catch (e) {
+    console.error('[medicine-ledger] Failed to send reset email:', e.message);
+  }
+}
+
+// ---------------------------------------------------------------------
 // Tiny JSON-file database. Fine for a single hospital's worth of data;
 // see README.md for notes on moving to a real database if this ever
 // needs to handle serious concurrent write volume.
@@ -104,16 +143,17 @@ function readDB() {
     var db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
     if (!db.pushSubscriptions) db.pushSubscriptions = {}; // userId -> [subscription, ...]
     if (!db.lastNotified) db.lastNotified = {};             // userId -> { fingerprint, at }
+    if (!db.passwordResets) db.passwordResets = [];          // [{ token, userId, expiresAt }, ...]
     return db;
   } catch (e) {
-    return { users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {} };
+    return { users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {}, passwordResets: [] };
   }
 }
 function writeDB(db) {
   fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
   persistToCloud(db); // fire-and-forget — local write already succeeded, this just mirrors it
 }
-if (!fs.existsSync(DB_FILE)) writeDB({ users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {} });
+if (!fs.existsSync(DB_FILE)) writeDB({ users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {}, passwordResets: [] });
 
 // ---------------------------------------------------------------------
 // Password hashing (scrypt — built into Node's crypto module, no bcrypt
@@ -366,6 +406,45 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, 401, { error: 'Incorrect username/email or password.' });
       }
       return sendJSON(res, 200, { token: signToken({ uid: user.id }), user: publicUser(user) });
+    }
+
+    if (url === '/api/forgot-password' && req.method === 'POST') {
+      const body = await readJSONBody(req);
+      const user = findByIdentifier(db, body.identifier);
+      // Always respond the same way whether or not the account exists —
+      // otherwise this endpoint could be used to check who has an account.
+      const genericMsg = { ok: true, message: 'If an account matches, a reset link has been sent to its email address.' };
+      if (user) {
+        // Clear out any old tokens for this user, then issue a fresh one.
+        db.passwordResets = db.passwordResets.filter((r) => r.userId !== user.id);
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = Date.now() + 30 * 60 * 1000; // 30 minutes
+        db.passwordResets.push({ token, userId: user.id, expiresAt });
+        writeDB(db);
+        const frontendUrl = (process.env.FRONTEND_URL || '').replace(/\/$/, '');
+        const resetUrl = (frontendUrl || 'https://your-app.vercel.app') + '/?reset=' + token;
+        sendPasswordResetEmail(user.email, resetUrl); // fire-and-forget, response doesn't wait on it
+      }
+      return sendJSON(res, 200, genericMsg);
+    }
+
+    if (url === '/api/reset-password' && req.method === 'POST') {
+      const body = await readJSONBody(req);
+      const token = String(body.token || '');
+      const newPassword = String(body.newPassword || '');
+      if (newPassword.length < 6) {
+        return sendJSON(res, 400, { error: 'Password should be at least 6 characters.' });
+      }
+      const entry = db.passwordResets.find((r) => r.token === token);
+      if (!entry || entry.expiresAt < Date.now()) {
+        return sendJSON(res, 400, { error: 'This reset link is invalid or has expired. Request a new one.' });
+      }
+      const user = db.users.find((u) => u.id === entry.userId);
+      if (!user) return sendJSON(res, 400, { error: 'This reset link is invalid or has expired. Request a new one.' });
+      user.passwordHash = hashPassword(newPassword);
+      db.passwordResets = db.passwordResets.filter((r) => r.userId !== user.id); // single-use
+      writeDB(db);
+      return sendJSON(res, 200, { ok: true, token: signToken({ uid: user.id }), user: publicUser(user) });
     }
 
     if (url === '/api/me' && req.method === 'GET') {
