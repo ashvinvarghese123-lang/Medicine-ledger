@@ -95,16 +95,15 @@ webpush.setVapidDetails(
 );
 
 // ---------------------------------------------------------------------
-// Password reset emails (optional). If RESEND_API_KEY is set, reset links
-// are emailed via Resend (https://resend.com — free tier, no extra npm
-// package needed since Node 18+ has fetch built in). Without it, the reset
-// link is just logged to the console — handy for local testing, and means
-// this feature never crashes a deployment that hasn't set it up yet.
-// FRONTEND_URL should be your Vercel URL, e.g. https://your-app.vercel.app
+// Email sending (optional). If RESEND_API_KEY is set, emails are sent via
+// Resend (https://resend.com — free tier, no extra npm package needed
+// since Node 18+ has fetch built in). Without it, the email content is
+// just logged to the console — handy for local testing, and means this
+// never crashes a deployment that hasn't set it up yet.
 // ---------------------------------------------------------------------
-async function sendPasswordResetEmail(toEmail, resetUrl) {
+async function sendEmail(toEmail, subject, html) {
   if (!process.env.RESEND_API_KEY) {
-    console.log('[medicine-ledger] RESEND_API_KEY not set — reset link for ' + toEmail + ':\n  ' + resetUrl);
+    console.log('[medicine-ledger] RESEND_API_KEY not set — would have emailed ' + toEmail + ': "' + subject + '"');
     return;
   }
   try {
@@ -117,11 +116,8 @@ async function sendPasswordResetEmail(toEmail, resetUrl) {
       body: JSON.stringify({
         from: process.env.RESET_EMAIL_FROM || 'Medicine Ledger <onboarding@resend.dev>',
         to: toEmail,
-        subject: 'Reset your Medicine Ledger password',
-        html:
-          '<p>Someone requested a password reset for your Medicine Ledger account.</p>' +
-          '<p><a href="' + resetUrl + '">Click here to set a new password</a> (link expires in 30 minutes).</p>' +
-          '<p>If you didn\'t request this, you can safely ignore this email.</p>',
+        subject: subject,
+        html: html,
       }),
     });
     if (!resp.ok) {
@@ -129,7 +125,7 @@ async function sendPasswordResetEmail(toEmail, resetUrl) {
       console.error('[medicine-ledger] Resend API error:', resp.status, errText);
     }
   } catch (e) {
-    console.error('[medicine-ledger] Failed to send reset email:', e.message);
+    console.error('[medicine-ledger] Failed to send email:', e.message);
   }
 }
 
@@ -143,17 +139,18 @@ function readDB() {
     var db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
     if (!db.pushSubscriptions) db.pushSubscriptions = {}; // userId -> [subscription, ...]
     if (!db.lastNotified) db.lastNotified = {};             // userId -> { fingerprint, at }
+    if (!db.lastEmailed) db.lastEmailed = {};                // userId -> { fingerprint, at }
     if (!db.passwordResets) db.passwordResets = [];          // [{ token, userId, expiresAt }, ...]
     return db;
   } catch (e) {
-    return { users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {}, passwordResets: [] };
+    return { users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {}, lastEmailed: {}, passwordResets: [] };
   }
 }
 function writeDB(db) {
   fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
   persistToCloud(db); // fire-and-forget — local write already succeeded, this just mirrors it
 }
-if (!fs.existsSync(DB_FILE)) writeDB({ users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {}, passwordResets: [] });
+if (!fs.existsSync(DB_FILE)) writeDB({ users: [], ledgers: {}, pushSubscriptions: {}, lastNotified: {}, lastEmailed: {}, passwordResets: [] });
 
 // ---------------------------------------------------------------------
 // Password hashing (scrypt — built into Node's crypto module, no bcrypt
@@ -244,7 +241,7 @@ function getAuthUser(req, db) {
   return db.users.find((u) => u.id === payload.uid) || null;
 }
 function publicUser(u) {
-  return { id: u.id, hospitalName: u.hospitalName, username: u.username, email: u.email };
+  return { id: u.id, hospitalName: u.hospitalName, username: u.username, email: u.email, emailAlertsEnabled: u.emailAlertsEnabled !== false };
 }
 function findByIdentifier(db, identifier) {
   const id = String(identifier || '').trim().toLowerCase();
@@ -286,34 +283,88 @@ async function sendToUser(db, userId, notification) {
 const CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;   // check every 6 hours
 const CHECK_COOLDOWN_MS = 20 * 60 * 60 * 1000;  // don't repeat the same alert set within 20 hours
 
+function buildAlertEmailHtml(user, alerts) {
+  function rows(items, cols) {
+    return items.map(function (it) {
+      return '<tr>' + cols.map(function (c) { return '<td style="padding:6px 10px;border-bottom:1px solid #eee;">' + c(it) + '</td>'; }).join('') + '</tr>';
+    }).join('');
+  }
+  var sections = [];
+  if (alerts.lowStock.length) {
+    sections.push(
+      '<h3 style="margin:20px 0 8px;font-family:sans-serif;color:#0F172A;">Low / out of stock (' + alerts.lowStock.length + ')</h3>' +
+      '<table style="width:100%;border-collapse:collapse;font-family:sans-serif;font-size:14px;color:#0F172A;">' +
+      rows(alerts.lowStock, [
+        function (a) { return a.name; },
+        function (a) { return a.remaining + ' ' + (a.unit || ''); },
+        function (a) { return a.status === 'empty' ? '<span style="color:#D6362E;font-weight:600;">Empty</span>' : '<span style="color:#B45309;font-weight:600;">Low</span>'; },
+      ]) +
+      '</table>'
+    );
+  }
+  if (alerts.expiring.length) {
+    sections.push(
+      '<h3 style="margin:20px 0 8px;font-family:sans-serif;color:#0F172A;">Expiring within 30 days (' + alerts.expiring.length + ')</h3>' +
+      '<table style="width:100%;border-collapse:collapse;font-family:sans-serif;font-size:14px;color:#0F172A;">' +
+      rows(alerts.expiring, [
+        function (a) { return a.name; },
+        function (a) { return a.remaining + ' ' + (a.unit || ''); },
+        function (a) { return a.days < 0 ? '<span style="color:#D6362E;font-weight:600;">Expired ' + Math.abs(a.days) + 'd ago</span>' : '<span style="color:#B45309;font-weight:600;">' + a.days + 'd left</span>'; },
+      ]) +
+      '</table>'
+    );
+  }
+  return (
+    '<div style="font-family:sans-serif;">' +
+    '<p style="color:#0F172A;">Here\'s the current alert summary for <b>' + user.hospitalName + '</b>.</p>' +
+    sections.join('') +
+    '<p style="margin-top:24px;font-size:12px;color:#94A3B8;">You\'re receiving this because email alerts are enabled on your Medicine Ledger account. You can turn them off from the app\'s settings.</p>' +
+    '</div>'
+  );
+}
+
 async function runAlertCheck() {
   const db = readDB();
   let changed = false;
   for (const user of db.users) {
-    const subs = db.pushSubscriptions[user.id] || [];
-    if (subs.length === 0) continue;
-
     const ledger = db.ledgers[user.id] || { medicines: [], logs: {} };
     const alerts = computeAlerts(ledger.medicines, ledger.logs);
     if (alerts.lowStock.length === 0 && alerts.expiring.length === 0) continue;
 
     const fingerprint = alertsFingerprint(alerts);
-    const last = db.lastNotified[user.id];
-    const cooledDown = !last || (Date.now() - last.at) > CHECK_COOLDOWN_MS;
-    if (last && last.fingerprint === fingerprint && !cooledDown) continue; // nothing new, not time yet
-
     const parts = [];
     if (alerts.lowStock.length) parts.push(alerts.lowStock.length + ' medicine' + (alerts.lowStock.length > 1 ? 's' : '') + ' low/out of stock');
     if (alerts.expiring.length) parts.push(alerts.expiring.length + ' expiring within 30 days');
 
-    const result = await sendToUser(db, user.id, {
-      title: 'Medicine Ledger — ' + user.hospitalName,
-      body: parts.join(' · '),
-      tag: 'stock-alert',
-    });
-    db.lastNotified[user.id] = { fingerprint: fingerprint, at: Date.now() };
-    changed = true;
-    console.log('[push] alert sent to', user.username, '-', result.sent, 'device(s)');
+    // Push notification — only reaches devices that subscribed
+    const subs = db.pushSubscriptions[user.id] || [];
+    if (subs.length > 0) {
+      const last = db.lastNotified[user.id];
+      const cooledDown = !last || (Date.now() - last.at) > CHECK_COOLDOWN_MS;
+      if (!last || last.fingerprint !== fingerprint || cooledDown) {
+        const result = await sendToUser(db, user.id, {
+          title: 'Medicine Ledger — ' + user.hospitalName,
+          body: parts.join(' · '),
+          tag: 'stock-alert',
+        });
+        db.lastNotified[user.id] = { fingerprint: fingerprint, at: Date.now() };
+        changed = true;
+        console.log('[push] alert sent to', user.username, '-', result.sent, 'device(s)');
+      }
+    }
+
+    // Email digest — independent channel, reaches anyone with an email on
+    // file regardless of whether they've ever opened the app on this device.
+    if (user.emailAlertsEnabled !== false && user.email) {
+      const lastEmail = db.lastEmailed[user.id];
+      const emailCooledDown = !lastEmail || (Date.now() - lastEmail.at) > CHECK_COOLDOWN_MS;
+      if (!lastEmail || lastEmail.fingerprint !== fingerprint || emailCooledDown) {
+        await sendEmail(user.email, 'Medicine Ledger alerts — ' + user.hospitalName, buildAlertEmailHtml(user, alerts));
+        db.lastEmailed[user.id] = { fingerprint: fingerprint, at: Date.now() };
+        changed = true;
+        console.log('[email] alert digest sent to', user.username);
+      }
+    }
   }
   if (changed) writeDB(db);
 }
@@ -423,7 +474,11 @@ const server = http.createServer(async (req, res) => {
         writeDB(db);
         const frontendUrl = (process.env.FRONTEND_URL || '').replace(/\/$/, '');
         const resetUrl = (frontendUrl || 'https://your-app.vercel.app') + '/?reset=' + token;
-        sendPasswordResetEmail(user.email, resetUrl); // fire-and-forget, response doesn't wait on it
+        var resetHtml =
+          '<p>Someone requested a password reset for your Medicine Ledger account.</p>' +
+          '<p><a href="' + resetUrl + '">Click here to set a new password</a> (link expires in 30 minutes).</p>' +
+          '<p>If you didn\'t request this, you can safely ignore this email.</p>';
+        sendEmail(user.email, 'Reset your Medicine Ledger password', resetHtml); // fire-and-forget, response doesn't wait on it
       }
       return sendJSON(res, 200, genericMsg);
     }
@@ -450,6 +505,15 @@ const server = http.createServer(async (req, res) => {
     if (url === '/api/me' && req.method === 'GET') {
       const user = getAuthUser(req, db);
       if (!user) return sendJSON(res, 401, { error: 'Not logged in.' });
+      return sendJSON(res, 200, { user: publicUser(user) });
+    }
+
+    if (url === '/api/settings/email-alerts' && req.method === 'POST') {
+      const user = getAuthUser(req, db);
+      if (!user) return sendJSON(res, 401, { error: 'Not logged in.' });
+      const body = await readJSONBody(req);
+      user.emailAlertsEnabled = body.enabled !== false;
+      writeDB(db);
       return sendJSON(res, 200, { user: publicUser(user) });
     }
 
